@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taller de Ortografía</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap');
+
+:root {
+  --navy: #1a237e;
+  --blue: #3949ab;
+  --accent: #ffd600;
+  --green: #00c853;
+  --red: #f44336;
+  --orange: #ff6d00;
+  --white: #ffffff;
+  --light: #e8eaf6;
+  --shadow: 0 8px 32px rgba(26,35,126,0.18);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(135deg, #0d1257 0%, #1a237e 50%, #283593 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20px 12px 40px;
+}
+
+/* ===== ROLE SELECTOR ===== */
+#roleSelector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin-top: 40px;
+  width: 100%;
+  max-width: 520px;
+}
+.role-logo { font-size: 3.5rem; margin-bottom: 4px; }
+.role-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 2.6rem;
+  color: var(--white);
+  text-align: center;
+  line-height: 1;
+}
+.role-sub { color: #9fa8da; font-size: 1rem; font-weight: 600; text-align: center; }
+
+.role-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+}
+.role-card {
+  background: rgba(255,255,255,0.08);
+  border: 2.5px solid rgba(255,255,255,0.15);
+  border-radius: 20px;
+  padding: 28px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--white);
+}
+.role-card:hover {
+  background: rgba(255,255,255,0.16);
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(255,214,0,0.2);
+}
+.role-card .icon { font-size: 3rem; display: block; margin-bottom: 10px; }
+.role-card .label {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.4rem;
+  display: block;
+  margin-bottom: 6px;
+}
+.role-card .desc { font-size: 0.82rem; color: #9fa8da; font-weight: 600; }
+
+/* ===== SHARED CARD ===== */
+.screen { display: none; width: 100%; max-width: 900px; }
+.screen.active { display: block; }
+
+.card {
+  background: var(--white);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.card-header {
+  background: linear-gradient(135deg, #1a237e, #3949ab);
+  padding: 28px 36px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.card-header-icon { font-size: 2.4rem; flex-shrink: 0; }
+.card-header-title { font-family: 'Fredoka One', cursive; font-size: 1.7rem; color: var(--white); line-height: 1.1; }
+.card-header-sub { font-size: 0.88rem; color: #c5cae9; margin-top: 4px; font-weight: 600; }
+.card-body { padding: 28px 36px 32px; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.18s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+.btn-navy { background: var(--navy); color: var(--white); }
+.btn-navy:not(:disabled):hover { background: var(--blue); transform: translateY(-2px); }
+.btn-accent { background: var(--accent); color: var(--navy); }
+.btn-accent:not(:disabled):hover { background: #ffea00; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(255,214,0,0.4); }
+.btn-green { background: var(--green); color: var(--white); }
+.btn-green:not(:disabled):hover { background: #00e676; transform: translateY(-2px); }
+.btn-red { background: var(--red); color: var(--white); }
+.btn-big { font-size: 1.2rem; padding: 16px 40px; border-radius: 14px; }
+.btn-full { width: 100%; justify-content: center; }
+
+/* ===== INPUTS ===== */
+.field-label { font-size: 0.85rem; font-weight: 800; color: #5c6bc0; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.text-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2.5px solid #c5cae9;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  color: var(--navy);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.text-input:focus { border-color: var(--navy); }
+
+/* ===== STUDENT JOIN SCREEN ===== */
+.join-center { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.join-avatar-big {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--navy), var(--blue));
+  color: var(--white);
+  font-family: 'Fredoka One', cursive;
+  font-size: 2.4rem;
+  display: flex; align-items: center; justify-content: center;
+  border: 4px solid var(--accent);
+  transition: all 0.3s;
+}
+
+/* ===== WAITING ROOM ===== */
+.waiting-msg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  background: var(--light);
+  border-radius: 16px;
+  margin: 16px 0;
+}
+.spinner {
+  width: 44px; height: 44px;
+  border: 5px solid #c5cae9;
+  border-top-color: var(--navy);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.student-pill-list {
+  display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0;
+}
+.student-pill {
+  background: var(--light);
+  border: 2px solid #9fa8da;
+  color: var(--navy);
+  border-radius: 50px;
+  padding: 6px 14px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  display: flex; align-items: center; gap: 6px;
+  animation: popIn 0.25s ease;
+}
+.pill-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+@keyframes popIn { from{transform:scale(0.7);opacity:0;} to{transform:scale(1);opacity:1;} }
+
+/* ===== TEACHER PANEL ===== */
+.teacher-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.teacher-student-card {
+  background: var(--light);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.3s;
+}
+.teacher-student-card.done { background: #e8f5e9; border: 2px solid #a5d6a7; }
+.t-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--navy), var(--blue));
+  color: var(--white);
+  font-family: 'Fredoka One', cursive;
+  font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.t-name { font-weight: 800; color: var(--navy); font-size: 0.88rem; }
+.t-status { font-size: 0.75rem; color: #78909c; font-weight: 700; }
+.t-status.ok { color: var(--green); }
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 16px 0;
+}
+.stat-box {
+  background: var(--light);
+  border-radius: 14px;
+  padding: 16px 12px;
+  text-align: center;
+}
+.stat-num { font-family: 'Fredoka One', cursive; font-size: 2rem; color: var(--navy); }
+.stat-label { font-size: 0.78rem; font-weight: 800; color: #9fa8da; text-transform: uppercase; letter-spacing: 1px; }
+
+/* ===== TIMER ===== */
+.timer-wrap { margin-bottom: 16px; }
+.timer-bar-bg { background: #e8eaf6; border-radius: 50px; height: 16px; overflow: hidden; margin-bottom: 6px; }
+.timer-bar-fill {
+  height: 100%; border-radius: 50px;
+  background: linear-gradient(90deg, #00c853, #ffd600, #f44336);
+  transition: width 1s linear;
+}
+.timer-text {
+  text-align: right;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.6rem;
+  color: var(--navy);
+  line-height: 1;
+}
+.timer-text.urgent { color: var(--red); animation: blink 0.5s infinite; }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+
+/* ===== EXERCISE ===== */
+.hint-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.hint-pill {
+  background: var(--navy);
+  color: var(--white);
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+.paragraph-box {
+  font-size: 1.12rem;
+  line-height: 2.6;
+  color: #212121;
+  font-weight: 600;
+  border: 2.5px solid #c5cae9;
+  border-radius: 14px;
+  padding: 18px 22px;
+  background: #fafbff;
+  margin-bottom: 20px;
+}
+.blank-inp {
+  width: 30px;
+  border: none;
+  border-bottom: 3px solid var(--navy);
+  background: transparent;
+  font-size: 1.08rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  color: var(--navy);
+  text-align: center;
+  outline: none;
+  padding: 0 1px;
+  margin: 0 1px;
+  vertical-align: baseline;
+}
+.blank-inp:focus { border-bottom-color: var(--accent); }
+.blank-inp.ok { border-bottom-color: var(--green); color: var(--green); }
+.blank-inp.err { border-bottom-color: var(--red); color: var(--red); }
+
+/* ===== RESULTS ===== */
+.podium {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 20px 0 28px;
+}
+.p-place { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.p-avatar {
+  width: 50px; height: 50px; border-radius: 50%;
+  color: var(--white); font-family: 'Fredoka One', cursive; font-size: 1.3rem;
+  display: flex; align-items: center; justify-content: center;
+  border: 4px solid var(--white);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.p1-av { background: linear-gradient(135deg,#ffd600,#ff8f00); }
+.p2-av { background: linear-gradient(135deg,#bdbdbd,#757575); }
+.p3-av { background: linear-gradient(135deg,#ff7043,#bf360c); }
+.p-name { font-size: 0.82rem; font-weight: 800; color: var(--navy); text-align: center; max-width: 80px; }
+.p-block {
+  border-radius: 12px 12px 0 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-end;
+  padding: 10px 6px;
+  font-family: 'Fredoka One', cursive;
+  color: var(--white);
+  font-size: 1.1rem;
+  width: 80px;
+}
+.pb1 { background: linear-gradient(180deg,#ffd600,#ff8f00); height: 110px; }
+.pb2 { background: linear-gradient(180deg,#9e9e9e,#616161); height: 80px; }
+.pb3 { background: linear-gradient(180deg,#ff7043,#bf360c); height: 60px; }
+
+.results-list { display: flex; flex-direction: column; gap: 8px; }
+.result-row {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--light); border-radius: 12px; padding: 12px 16px;
+}
+.result-rank {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: #9fa8da; color: var(--white);
+  font-family: 'Fredoka One', cursive; font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.rr1 { background: linear-gradient(135deg,#ffd600,#ff8f00); }
+.rr2 { background: linear-gradient(135deg,#9e9e9e,#616161); }
+.rr3 { background: linear-gradient(135deg,#ff7043,#bf360c); }
+.result-name { flex: 1; font-weight: 800; color: var(--navy); }
+.result-correct { font-size: 0.82rem; color: #78909c; font-weight: 700; }
+.result-score { font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: var(--navy); text-align: right; }
+.score-mini-bar { background: #c5cae9; border-radius: 50px; height: 6px; flex: 1; max-width: 80px; overflow: hidden; }
+.score-mini-fill { height: 100%; background: linear-gradient(90deg,var(--navy),var(--blue)); border-radius: 50px; }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--navy); color: var(--white);
+  border-radius: 12px; padding: 12px 24px;
+  font-weight: 700; font-size: 0.95rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  z-index: 9999; opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+.toast.show { opacity: 1; }
+
+/* ===== CONFETTI ===== */
+.confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998; }
+
+/* ===== MISC ===== */
+.divider { border: none; border-top: 2px solid var(--light); margin: 20px 0; }
+.section-label {
+  font-size: 0.78rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 1.5px; color: #9fa8da; margin-bottom: 10px;
+}
+.error-text { color: var(--red); font-weight: 700; font-size: 0.88rem; min-height: 18px; }
+.success-text { color: var(--green); font-weight: 700; font-size: 0.88rem; }
+
+.tag-live {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #e8f5e9; color: var(--green);
+  border-radius: 50px; padding: 4px 12px;
+  font-size: 0.8rem; font-weight: 800;
+}
+.pulse-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green); animation: pulse 1s infinite;
+}
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.4);opacity:0.7;} }
+
+.info-banner {
+  background: #fff8e1; border: 2px solid var(--accent);
+  border-radius: 12px; padding: 12px 16px;
+  font-size: 0.9rem; font-weight: 700; color: #e65100;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px;
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--light); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #9fa8da; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="confetti-canvas" id="confettiCanvas"></div>
+<div class="toast" id="toast"></div>
+
+<!-- ===== ROLE SELECTOR ===== -->
+<div id="roleSelector">
+  <div style="text-align:center">
+    <div class="role-logo">📚</div>
+    <div class="role-title">Taller de Ortografía</div>
+    <div class="role-sub" style="margin-top:6px;">¿Quién eres hoy?</div>
+  </div>
+  <div class="role-cards">
+    <div class="role-card" onclick="selectRole('student')">
+      <span class="icon">🎒</span>
+      <span class="label">Soy Alumno</span>
+      <span class="desc">Ingresa tu nombre y únete al taller</span>
+    </div>
+    <div class="role-card" onclick="selectRole('teacher')">
+      <span class="icon">👩‍🏫</span>
+      <span class="label">Soy Profesor</span>
+      <span class="desc">Controla la sala y da inicio</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STUDENT: JOIN ===== -->
+<div class="screen" id="scrStudentJoin">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">🎒</div>
+      <div>
+        <div class="card-header-title">¡Únete al Taller!</div>
+        <div class="card-header-sub">Escribe tu nombre para ingresar a la sala</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="join-center">
+        <div class="join-avatar-big" id="joinAvatar">?</div>
+        <div style="width:100%">
+          <div class="field-label">Tu nombre completo</div>
+          <input class="text-input" id="studentNameInput" placeholder="Ej: María González"
+            maxlength="40" oninput="updateAvatar()" onkeydown="if(event.key==='Enter') joinRoom()">
+          <div class="error-text" id="joinError" style="margin-top:6px;"></div>
+        </div>
+        <button class="btn btn-accent btn-big btn-full" onclick="joinRoom()">
+          ✅ Ingresar al Salón
+        </button>
+        <div style="font-size:0.82rem;color:#9fa8da;text-align:center;font-weight:700;">
+          Capacidad: hasta 40 alumnos por sesión
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STUDENT: WAITING ===== -->
+<div class="screen" id="scrStudentWaiting">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">⏳</div>
+      <div>
+        <div class="card-header-title" id="waitTitle">¡Ya estás dentro!</div>
+        <div class="card-header-sub">Espera a que el profesor inicie el taller</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="info-banner">
+        🏷️ Registrado como: <strong id="waitName">—</strong>
+      </div>
+      <div class="waiting-msg">
+        <div class="spinner"></div>
+        <div style="font-weight:800;color:var(--navy);font-size:1rem;">Esperando al profesor...</div>
+        <div style="font-size:0.85rem;color:#78909c;font-weight:600;">El taller comenzará en cualquier momento</div>
+      </div>
+      <div class="section-label">Compañeros en la sala</div>
+      <div class="student-pill-list" id="waitingPeerList"></div>
+      <div style="margin-top:8px;font-size:0.82rem;color:#9fa8da;font-weight:700;" id="peerCount">0 alumnos conectados</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STUDENT: EXERCISE ===== -->
+<div class="screen" id="scrStudentExercise">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">✏️</div>
+      <div>
+        <div class="card-header-title">Taller de Ortografía</div>
+        <div class="card-header-sub" id="exStudentName"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="timer-wrap">
+        <div class="timer-bar-bg">
+          <div class="timer-bar-fill" id="studentTimerBar" style="width:100%"></div>
+        </div>
+        <div class="timer-text" id="studentTimerText">5:00</div>
+      </div>
+      <div class="hint-pills">
+        <span class="hint-pill">b / v</span>
+        <span class="hint-pill">m / n</span>
+        <span class="hint-pill">c / s</span>
+        <span class="hint-pill">g / j</span>
+        <span class="hint-pill">z / s</span>
+        <span class="hint-pill">f / p</span>
+      </div>
+      <div class="paragraph-box" id="studentExercise"></div>
+      <div id="submitArea" style="text-align:center;">
+        <button class="btn btn-green btn-big" id="studentSubmitBtn" onclick="studentSubmit()">
+          📨 Enviar Mis Respuestas
+        </button>
+      </div>
+      <div id="submitDoneMsg" style="display:none;text-align:center;padding:16px;">
+        <div style="font-size:2rem">🎉</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.3rem;color:var(--green);margin:6px 0;">¡Respuestas enviadas!</div>
+        <div style="font-size:0.9rem;color:#78909c;font-weight:700;">Espera a que todos terminen para ver los resultados</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STUDENT: RESULTS ===== -->
+<div class="screen" id="scrStudentResults">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">🏆</div>
+      <div>
+        <div class="card-header-title">Resultados del Taller</div>
+        <div class="card-header-sub">Puntaje máximo: 10,000 puntos</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div id="myResultBanner" style="margin-bottom:20px;"></div>
+      <div class="podium" id="studentPodium"></div>
+      <div class="section-label">Tabla completa</div>
+      <div class="results-list" id="studentResultsList"></div>
+      <div style="text-align:center;margin-top:24px;">
+        <button class="btn btn-navy" onclick="location.reload()">🔄 Nueva Sesión</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TEACHER: LOBBY ===== -->
+<div class="screen" id="scrTeacherLobby">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">👩‍🏫</div>
+      <div>
+        <div class="card-header-title">Panel del Profesor</div>
+        <div class="card-header-sub">Sala de espera — Alumnos ingresando</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-num" id="statJoined">0</div>
+          <div class="stat-label">Conectados</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="statMax">40</div>
+          <div class="stat-label">Capacidad</div>
+        </div>
+        <div class="stat-box">
+          <div class="tag-live"><div class="pulse-dot"></div>EN VIVO</div>
+          <div class="stat-label" style="margin-top:6px;">Estado</div>
+        </div>
+      </div>
+      <div class="section-label">Alumnos en la sala</div>
+      <div class="teacher-grid" id="teacherStudentGrid"></div>
+      <hr class="divider">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div style="font-size:0.88rem;font-weight:700;color:#78909c;">
+          El taller dura <strong>5 minutos</strong>. Todos comienzan al mismo tiempo.
+        </div>
+        <button class="btn btn-accent btn-big" id="startTallerBtn" onclick="teacherStartTaller()" disabled>
+          🚀 Iniciar Taller
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TEACHER: MONITOR ===== -->
+<div class="screen" id="scrTeacherMonitor">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">📊</div>
+      <div>
+        <div class="card-header-title">Monitor en Tiempo Real</div>
+        <div class="card-header-sub" id="teacherTimerLabel">Tiempo restante del taller</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="timer-wrap">
+        <div class="timer-bar-bg">
+          <div class="timer-bar-fill" id="teacherTimerBar" style="width:100%"></div>
+        </div>
+        <div class="timer-text" id="teacherTimerText">5:00</div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-num" id="monTotal">0</div>
+          <div class="stat-label">Total</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="monDone" style="color:var(--green)">0</div>
+          <div class="stat-label">Enviaron</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="monPending" style="color:var(--orange)">0</div>
+          <div class="stat-label">Pendientes</div>
+        </div>
+      </div>
+      <div class="section-label">Estado por alumno</div>
+      <div class="teacher-grid" id="monitorGrid"></div>
+      <hr class="divider">
+      <div style="text-align:center;">
+        <button class="btn btn-red btn-big" onclick="teacherEndNow()">⏹ Cerrar Taller Ahora</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TEACHER: RESULTS ===== -->
+<div class="screen" id="scrTeacherResults">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">🏆</div>
+      <div>
+        <div class="card-header-title">Resultados Finales</div>
+        <div class="card-header-sub">Puntaje máximo: 10,000 puntos</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="podium" id="teacherPodium"></div>
+      <div class="section-label">Tabla completa — Mayor a menor puntaje</div>
+      <div class="results-list" id="teacherResultsList"></div>
+      <div style="text-align:center;margin-top:24px;">
+        <button class="btn btn-navy btn-big" onclick="location.reload()">🔄 Nueva Sesión</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  STORAGE KEY + STATE
+// ============================================================
+const STORAGE_KEY = 'taller_ortografia_room';
+const MAX_STUDENTS = 40;
+const TOTAL_TIME = 300; // 5 min
+
+const ANSWERS = {
+  b0:'v', b1:'b', b2:'b', b3:'j', b4:'n',
+  b5:'g', b6:'m', b7:'z', b8:'s', b9:'p',
+  b10:'m', b11:'j', b12:'c', b13:'g', b14:'v',
+  b15:'b', b16:'z', b17:'m', b18:'m', b19:'f'
+};
+const TOTAL_BLANKS = Object.keys(ANSWERS).length;
+
+let myName = '';
+let myRole = '';
+let timerInterval = null;
+let pollInterval = null;
+let timeLeft = TOTAL_TIME;
+let submitted = false;
+
+// ============================================================
+//  ROOM DATA (stored as shared JSON)
+// ============================================================
+function emptyRoom() {
+  return {
+    phase: 'lobby',      // lobby | active | results
+    students: {},        // name -> { joined, score, correct, submitted }
+    startTime: null,
+    endTime: null,
+    lastUpdate: Date.now()
+  };
+}
+
+function loadRoom() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return emptyRoom();
+    return JSON.parse(raw);
+  } catch { return emptyRoom(); }
+}
+
+function saveRoom(room) {
+  room.lastUpdate = Date.now();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(room));
+}
+
+// ============================================================
+//  ROLE SELECTION
+// ============================================================
+function selectRole(role) {
+  myRole = role;
+  document.getElementById('roleSelector').style.display = 'none';
+  if (role === 'student') {
+    showScreen('scrStudentJoin');
+  } else {
+    // teacher
+    let room = loadRoom();
+    if (room.phase === 'results') {
+      // reset
+      room = emptyRoom();
+      saveRoom(room);
+    }
+    showScreen('scrTeacherLobby');
+    startTeacherPoll();
+  }
+}
+
+// ============================================================
+//  STUDENT FLOW
+// ============================================================
+function updateAvatar() {
+  const val = document.getElementById('studentNameInput').value.trim();
+  document.getElementById('joinAvatar').textContent = val ? val[0].toUpperCase() : '?';
+}
+
+function joinRoom() {
+  const inp = document.getElementById('studentNameInput');
+  const name = inp.value.trim();
+  const err = document.getElementById('joinError');
+
+  if (!name) { err.textContent = '⚠️ Escribe tu nombre para continuar.'; return; }
+
+  const room = loadRoom();
+
+  if (room.phase === 'results') { err.textContent = '⚠️ El taller ya terminó. Espera una nueva sesión.'; return; }
+  if (room.phase === 'active') { err.textContent = '⚠️ El taller ya comenzó. No puedes unirte ahora.'; return; }
+
+  const count = Object.keys(room.students).length;
+  if (room.students[name]) { err.textContent = '⚠️ Ese nombre ya está registrado. ¿Eres tú? Si es así, espera.'; return; }
+  if (count >= MAX_STUDENTS) { err.textContent = `⚠️ La sala está llena (${MAX_STUDENTS} alumnos máximo).`; return; }
+
+  myName = name;
+  room.students[name] = { joined: Date.now(), score: 0, correct: 0, submitted: false };
+  saveRoom(room);
+  err.textContent = '';
+
+  document.getElementById('waitName').textContent = name;
+  showScreen('scrStudentWaiting');
+  startStudentPoll();
+}
+
+function startStudentPoll() {
+  pollInterval = setInterval(() => {
+    const room = loadRoom();
+    // Update peer list
+    const peers = Object.keys(room.students).filter(n => n !== myName);
+    const list = document.getElementById('waitingPeerList');
+    if (list) {
+      list.innerHTML = Object.keys(room.students).map(n => `
+        <div class="student-pill">
+          <div class="pill-dot"></div>${n}${n===myName?' (tú)':''}
+        </div>`).join('');
+      document.getElementById('peerCount').textContent =
+        `${Object.keys(room.students).length} alumno(s) conectado(s)`;
+    }
+    // Check phase
+    if (room.phase === 'active' && !submitted) {
+      clearInterval(pollInterval);
+      startStudentExercise(room);
+    }
+    if (room.phase === 'results') {
+      clearInterval(pollInterval);
+      clearInterval(timerInterval);
+      showStudentResults(room);
+    }
+  }, 1000);
+}
+
+function startStudentExercise(room) {
+  document.getElementById('exStudentName').textContent = `¡Hola, ${myName}!`;
+  showScreen('scrStudentExercise');
+  buildStudentExercise();
+
+  // Calculate remaining time
+  const elapsed = Math.floor((Date.now() - room.startTime) / 1000);
+  timeLeft = Math.max(0, TOTAL_TIME - elapsed);
+  updateStudentTimer();
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateStudentTimer();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      studentSubmit(true);
+    }
+  }, 1000);
+
+  // Keep polling for results phase
+  pollInterval = setInterval(() => {
+    const r = loadRoom();
+    if (r.phase === 'results') {
+      clearInterval(pollInterval);
+      clearInterval(timerInterval);
+      showStudentResults(r);
+    }
+  }, 1500);
+}
+
+function updateStudentTimer() {
+  const m = Math.floor(timeLeft/60), s = timeLeft%60;
+  const txt = document.getElementById('studentTimerText');
+  const bar = document.getElementById('studentTimerBar');
+  if (!txt || !bar) return;
+  txt.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  txt.className = 'timer-text' + (timeLeft <= 60 ? ' urgent' : '');
+  bar.style.width = (timeLeft/TOTAL_TIME*100) + '%';
+}
+
+function buildStudentExercise() {
+  document.getElementById('studentExercise').innerHTML = `
+    El jo<input class="blank-inp" id="b0" maxlength="1" placeholder="_">en
+    o<input class="blank-inp" id="b1" maxlength="1" placeholder="_">ser<input class="blank-inp" id="b2" maxlength="1" placeholder="_">aba
+    los pá<input class="blank-inp" id="b3" maxlength="1" placeholder="_">aros
+    desde su ve<input class="blank-inp" id="b4" maxlength="1" placeholder="_">tana.
+    Notó que al<input class="blank-inp" id="b5" maxlength="1" placeholder="_">unos
+    tenían plu<input class="blank-inp" id="b6" maxlength="1" placeholder="_">as
+    de color a<input class="blank-inp" id="b7" maxlength="1" placeholder="_">ul
+    o<input class="blank-inp" id="b8" maxlength="1" placeholder="_">curo.
+    De re<input class="blank-inp" id="b9" maxlength="1" placeholder="_">ente
+    e<input class="blank-inp" id="b10" maxlength="1" placeholder="_">pezó
+    a llover y los pá<input class="blank-inp" id="b11" maxlength="1" placeholder="_">aros
+    bus<input class="blank-inp" id="b12" maxlength="1" placeholder="_">aron
+    refu<input class="blank-inp" id="b13" maxlength="1" placeholder="_">io
+    en las ramas. El jo<input class="blank-inp" id="b14" maxlength="1" placeholder="_">en
+    sa<input class="blank-inp" id="b15" maxlength="1" placeholder="_">ía
+    que la naturale<input class="blank-inp" id="b16" maxlength="1" placeholder="_">a
+    sie<input class="blank-inp" id="b17" maxlength="1" placeholder="_">pre
+    tiene algo her<input class="blank-inp" id="b18" maxlength="1" placeholder="_">oso
+    que o<input class="blank-inp" id="b19" maxlength="1" placeholder="_">recer.
+  `;
+  document.querySelectorAll('.blank-inp').forEach(inp => {
+    inp.addEventListener('focus', () => { if(!inp.classList.contains('ok')&&!inp.classList.contains('err')) inp.style.borderBottomColor='#ffd600'; });
+    inp.addEventListener('blur',  () => { if(!inp.classList.contains('ok')&&!inp.classList.contains('err')) inp.style.borderBottomColor='var(--navy)'; });
+  });
+}
+
+function studentSubmit(auto = false) {
+  if (submitted) return;
+  submitted = true;
+  clearInterval(timerInterval);
+
+  let correct = 0;
+  Object.entries(ANSWERS).forEach(([id, ans]) => {
+    const inp = document.getElementById(id);
+    if (!inp) return;
+    const val = inp.value.trim().toLowerCase();
+    if (val === ans) { correct++; inp.classList.add('ok'); }
+    else { inp.classList.add('err'); inp.value = ans; }
+    inp.disabled = true;
+  });
+
+  const timeBonus = timeLeft;
+  const base = Math.round((correct / TOTAL_BLANKS) * 8000);
+  const bonus = Math.round((timeBonus / TOTAL_TIME) * 2000);
+  const total = Math.min(base + bonus, 10000);
+
+  // Save score to room
+  const room = loadRoom();
+  if (room.students[myName]) {
+    room.students[myName].correct = correct;
+    room.students[myName].score = total;
+    room.students[myName].submitted = true;
+  }
+  saveRoom(room);
+
+  // UI
+  document.getElementById('submitArea').style.display = 'none';
+  document.getElementById('submitDoneMsg').style.display = 'block';
+  showToast(`✅ Enviado: ${correct}/${TOTAL_BLANKS} correctas — ${total.toLocaleString()} pts`);
+}
+
+function showStudentResults(room) {
+  showScreen('scrStudentResults');
+  const me = room.students[myName];
+
+  // My banner
+  if (me) {
+    document.getElementById('myResultBanner').innerHTML = `
+      <div style="background:var(--light);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:4px;">
+        <div style="font-size:2.4rem;">${getEmoji(me.score)}</div>
+        <div>
+          <div style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--navy);">Tu resultado, ${myName}</div>
+          <div style="font-size:0.9rem;color:#78909c;font-weight:700;">${me.correct||0}/${TOTAL_BLANKS} correctas · <strong style="color:var(--navy);">${(me.score||0).toLocaleString()} puntos</strong></div>
+        </div>
+      </div>`;
+  }
+  renderResults(room, 'studentPodium', 'studentResultsList');
+  launchConfetti();
+}
+
+function getEmoji(score) {
+  if (score >= 9000) return '🥇';
+  if (score >= 7000) return '🎉';
+  if (score >= 5000) return '👍';
+  return '📝';
+}
+
+// ============================================================
+//  TEACHER FLOW
+// ============================================================
+function startTeacherPoll() {
+  updateTeacherLobby();
+  pollInterval = setInterval(() => {
+    const room = loadRoom();
+    if (room.phase === 'lobby') updateTeacherLobby();
+    else if (room.phase === 'active') {
+      clearInterval(pollInterval);
+      startTeacherMonitor();
+    } else if (room.phase === 'results') {
+      clearInterval(pollInterval);
+      clearInterval(timerInterval);
+      showTeacherResults(loadRoom());
+    }
+  }, 1000);
+}
+
+function updateTeacherLobby() {
+  const room = loadRoom();
+  const students = Object.keys(room.students);
+  const n = students.length;
+
+  document.getElementById('statJoined').textContent = n;
+  document.getElementById('startTallerBtn').disabled = n < 1;
+
+  const grid = document.getElementById('teacherStudentGrid');
+  grid.innerHTML = students.map(s => `
+    <div class="teacher-student-card">
+      <div class="t-avatar">${s[0].toUpperCase()}</div>
+      <div>
+        <div class="t-name">${s}</div>
+        <div class="t-status ok">✓ Conectado</div>
+      </div>
+    </div>`).join('') || '<div style="color:#9fa8da;font-weight:700;padding:8px;">Esperando alumnos...</div>';
+}
+
+function teacherStartTaller() {
+  const room = loadRoom();
+  if (Object.keys(room.students).length < 1) return;
+  room.phase = 'active';
+  room.startTime = Date.now();
+  saveRoom(room);
+  clearInterval(pollInterval);
+  startTeacherMonitor();
+}
+
+function startTeacherMonitor() {
+  showScreen('scrTeacherMonitor');
+  const room = loadRoom();
+  const elapsed = Math.floor((Date.now() - room.startTime) / 1000);
+  timeLeft = Math.max(0, TOTAL_TIME - elapsed);
+  updateTeacherTimer();
+  updateMonitorGrid();
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTeacherTimer();
+    updateMonitorGrid();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      teacherEndNow();
+    }
+  }, 1000);
+
+  pollInterval = setInterval(updateMonitorGrid, 1500);
+}
+
+function updateTeacherTimer() {
+  const m = Math.floor(timeLeft/60), s = timeLeft%60;
+  const txt = document.getElementById('teacherTimerText');
+  const bar = document.getElementById('teacherTimerBar');
+  if (!txt||!bar) return;
+  txt.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  txt.className = 'timer-text' + (timeLeft<=60?' urgent':'');
+  bar.style.width = (timeLeft/TOTAL_TIME*100)+'%';
+}
+
+function updateMonitorGrid() {
+  const room = loadRoom();
+  const students = room.students;
+  const names = Object.keys(students);
+  const done = names.filter(n => students[n].submitted).length;
+
+  document.getElementById('monTotal').textContent = names.length;
+  document.getElementById('monDone').textContent = done;
+  document.getElementById('monPending').textContent = names.length - done;
+
+  document.getElementById('monitorGrid').innerHTML = names.map(n => {
+    const s = students[n];
+    return `
+      <div class="teacher-student-card ${s.submitted?'done':''}">
+        <div class="t-avatar">${n[0].toUpperCase()}</div>
+        <div>
+          <div class="t-name">${n}</div>
+          <div class="t-status ${s.submitted?'ok':''}">${s.submitted ? `✅ ${s.score?.toLocaleString()||0} pts` : '⏳ En progreso'}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function teacherEndNow() {
+  clearInterval(timerInterval);
+  clearInterval(pollInterval);
+  const room = loadRoom();
+  room.phase = 'results';
+  room.endTime = Date.now();
+  saveRoom(room);
+  showTeacherResults(room);
+}
+
+function showTeacherResults(room) {
+  showScreen('scrTeacherResults');
+  renderResults(room, 'teacherPodium', 'teacherResultsList');
+  launchConfetti();
+}
+
+// ============================================================
+//  SHARED RESULTS RENDERER
+// ============================================================
+function renderResults(room, podiumId, listId) {
+  const students = room.students;
+  const sorted = Object.keys(students).sort((a,b) => (students[b].score||0) - (students[a].score||0));
+
+  // Podium
+  const top = sorted.slice(0,3);
+  const order = top.length >= 3 ? [1,0,2] : top.length === 2 ? [1,0] : [0];
+  const avCls = ['p2-av','p1-av','p3-av'];
+  const blCls = ['pb2','pb1','pb3'];
+  const emojis = ['🥈','🥇','🥉'];
+
+  document.getElementById(podiumId).innerHTML = order.map(i => {
+    if (!top[i]) return '';
+    const s = top[i], sc = students[s];
+    return `
+      <div class="p-place">
+        <div class="p-avatar ${avCls[i]}">${s[0].toUpperCase()}</div>
+        <div class="p-name">${s}</div>
+        <div class="p-block ${blCls[i]}">${emojis[i]}<br>${(sc.score||0).toLocaleString()}</div>
+      </div>`;
+  }).join('');
+
+  // Full list
+  document.getElementById(listId).innerHTML = sorted.map((s, i) => {
+    const sc = students[s];
+    const pct = ((sc.score||0) / 10000) * 100;
+    const rrCls = i===0?'rr1':i===1?'rr2':i===2?'rr3':'';
+    return `
+      <div class="result-row">
+        <div class="result-rank ${rrCls}">${i+1}</div>
+        <div style="flex:1">
+          <div class="result-name">${s}</div>
+          <div class="result-correct">${sc.correct||0}/${TOTAL_BLANKS} correctas${sc.submitted?'':' · No entregó'}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="score-mini-bar"><div class="score-mini-fill" style="width:${pct}%"></div></div>
+          <div class="result-score">${(sc.score||0).toLocaleString()}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ============================================================
+//  UI HELPERS
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showToast(msg, dur=3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+function launchConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  canvas.innerHTML = '';
+  const colors = ['#ffd600','#1a237e','#00c853','#f44336','#5c6bc0','#ff7043','#ffffff'];
+  for (let i=0; i<100; i++) {
+    const p = document.createElement('div');
+    const size = Math.random()*10+5;
+    p.style.cssText = `
+      position:absolute; top:${Math.random()*-5}%; left:${Math.random()*100}%;
+      width:${size}px; height:${size}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      border-radius:${Math.random()>0.4?'50%':'2px'};
+      animation: confetti-fall ${1.5+Math.random()*2.5}s ${Math.random()*2}s linear forwards;
+      opacity:0.95;
+    `;
+    canvas.appendChild(p);
+  }
+  const st = document.createElement('style');
+  st.id = 'confetti-anim';
+  st.textContent = `@keyframes confetti-fall {
+    0%   { transform:translateY(0) rotate(0deg); opacity:1; }
+    100% { transform:translateY(110vh) rotate(720deg); opacity:0; }
+  }`;
+  document.head.appendChild(st);
+  setTimeout(() => { canvas.innerHTML=''; }, 6000);
+}
+</script>
+</body>
+</html>
