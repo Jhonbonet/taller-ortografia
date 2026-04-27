@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Taller de Ortografía</title>
+<title>Taller de Ortografía - Sesión en Vivo</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap');
 
@@ -146,31 +146,7 @@ body {
 }
 .text-input:focus { border-color: var(--navy); }
 
-/* ===== STUDENT JOIN SCREEN ===== */
-.join-center { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-.join-avatar-big {
-  width: 80px; height: 80px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--navy), var(--blue));
-  color: var(--white);
-  font-family: 'Fredoka One', cursive;
-  font-size: 2.4rem;
-  display: flex; align-items: center; justify-content: center;
-  border: 4px solid var(--accent);
-  transition: all 0.3s;
-}
-
-/* ===== WAITING ROOM ===== */
-.waiting-msg {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 20px;
-  background: var(--light);
-  border-radius: 16px;
-  margin: 16px 0;
-}
+/* ===== WAITING ROOM & LISTS ===== */
 .spinner {
   width: 44px; height: 44px;
   border: 5px solid #c5cae9;
@@ -192,10 +168,8 @@ body {
   font-size: 0.88rem;
   font-weight: 700;
   display: flex; align-items: center; gap: 6px;
-  animation: popIn 0.25s ease;
 }
 .pill-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
-@keyframes popIn { from{transform:scale(0.7);opacity:0;} to{transform:scale(1);opacity:1;} }
 
 /* ===== TEACHER PANEL ===== */
 .teacher-grid {
@@ -213,7 +187,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  transition: background 0.3s;
+  transition: all 0.3s;
 }
 .teacher-student-card.done { background: #e8f5e9; border: 2px solid #a5d6a7; }
 .t-avatar {
@@ -230,23 +204,7 @@ body {
 .t-status { font-size: 0.75rem; color: #78909c; font-weight: 700; }
 .t-status.ok { color: var(--green); }
 
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin: 16px 0;
-}
-.stat-box {
-  background: var(--light);
-  border-radius: 14px;
-  padding: 16px 12px;
-  text-align: center;
-}
-.stat-num { font-family: 'Fredoka One', cursive; font-size: 2rem; color: var(--navy); }
-.stat-label { font-size: 0.78rem; font-weight: 800; color: #9fa8da; text-transform: uppercase; letter-spacing: 1px; }
-
-/* ===== TIMER ===== */
-.timer-wrap { margin-bottom: 16px; }
+/* ===== TIMER & PROGRESS ===== */
 .timer-bar-bg { background: #e8eaf6; border-radius: 50px; height: 16px; overflow: hidden; margin-bottom: 6px; }
 .timer-bar-fill {
   height: 100%; border-radius: 50px;
@@ -258,22 +216,9 @@ body {
   font-family: 'Fredoka One', cursive;
   font-size: 1.6rem;
   color: var(--navy);
-  line-height: 1;
 }
-.timer-text.urgent { color: var(--red); animation: blink 0.5s infinite; }
-@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
 
 /* ===== EXERCISE ===== */
-.hint-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-.hint-pill {
-  background: var(--navy);
-  color: var(--white);
-  border-radius: 8px;
-  padding: 4px 12px;
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-}
 .paragraph-box {
   font-size: 1.12rem;
   line-height: 2.6;
@@ -291,918 +236,301 @@ body {
   border-bottom: 3px solid var(--navy);
   background: transparent;
   font-size: 1.08rem;
-  font-family: 'Nunito', sans-serif;
   font-weight: 800;
   color: var(--navy);
   text-align: center;
   outline: none;
-  padding: 0 1px;
-  margin: 0 1px;
-  vertical-align: baseline;
 }
-.blank-inp:focus { border-bottom-color: var(--accent); }
 .blank-inp.ok { border-bottom-color: var(--green); color: var(--green); }
 .blank-inp.err { border-bottom-color: var(--red); color: var(--red); }
 
-/* ===== RESULTS ===== */
-.podium {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 12px;
-  margin: 20px 0 28px;
-}
-.p-place { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.p-avatar {
-  width: 50px; height: 50px; border-radius: 50%;
-  color: var(--white); font-family: 'Fredoka One', cursive; font-size: 1.3rem;
-  display: flex; align-items: center; justify-content: center;
-  border: 4px solid var(--white);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-.p1-av { background: linear-gradient(135deg,#ffd600,#ff8f00); }
-.p2-av { background: linear-gradient(135deg,#bdbdbd,#757575); }
-.p3-av { background: linear-gradient(135deg,#ff7043,#bf360c); }
-.p-name { font-size: 0.82rem; font-weight: 800; color: var(--navy); text-align: center; max-width: 80px; }
-.p-block {
-  border-radius: 12px 12px 0 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: flex-end;
-  padding: 10px 6px;
-  font-family: 'Fredoka One', cursive;
-  color: var(--white);
-  font-size: 1.1rem;
-  width: 80px;
-}
-.pb1 { background: linear-gradient(180deg,#ffd600,#ff8f00); height: 110px; }
-.pb2 { background: linear-gradient(180deg,#9e9e9e,#616161); height: 80px; }
-.pb3 { background: linear-gradient(180deg,#ff7043,#bf360c); height: 60px; }
-
-.results-list { display: flex; flex-direction: column; gap: 8px; }
-.result-row {
-  display: flex; align-items: center; gap: 12px;
-  background: var(--light); border-radius: 12px; padding: 12px 16px;
-}
-.result-rank {
-  width: 32px; height: 32px; border-radius: 50%;
-  background: #9fa8da; color: var(--white);
-  font-family: 'Fredoka One', cursive; font-size: 1rem;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.rr1 { background: linear-gradient(135deg,#ffd600,#ff8f00); }
-.rr2 { background: linear-gradient(135deg,#9e9e9e,#616161); }
-.rr3 { background: linear-gradient(135deg,#ff7043,#bf360c); }
-.result-name { flex: 1; font-weight: 800; color: var(--navy); }
-.result-correct { font-size: 0.82rem; color: #78909c; font-weight: 700; }
-.result-score { font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: var(--navy); text-align: right; }
-.score-mini-bar { background: #c5cae9; border-radius: 50px; height: 6px; flex: 1; max-width: 80px; overflow: hidden; }
-.score-mini-fill { height: 100%; background: linear-gradient(90deg,var(--navy),var(--blue)); border-radius: 50px; }
-
-/* ===== TOAST ===== */
+/* ===== RESULTS & TOAST ===== */
 .toast {
   position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
   background: var(--navy); color: var(--white);
   border-radius: 12px; padding: 12px 24px;
-  font-weight: 700; font-size: 0.95rem;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
-  z-index: 9999; opacity: 0; pointer-events: none;
-  transition: opacity 0.3s;
+  font-weight: 700; opacity: 0; transition: opacity 0.3s;
+  z-index: 9999; pointer-events: none;
 }
 .toast.show { opacity: 1; }
-
-/* ===== CONFETTI ===== */
-.confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998; }
-
-/* ===== MISC ===== */
-.divider { border: none; border-top: 2px solid var(--light); margin: 20px 0; }
-.section-label {
-  font-size: 0.78rem; font-weight: 800; text-transform: uppercase;
-  letter-spacing: 1.5px; color: #9fa8da; margin-bottom: 10px;
-}
-.error-text { color: var(--red); font-weight: 700; font-size: 0.88rem; min-height: 18px; }
-.success-text { color: var(--green); font-weight: 700; font-size: 0.88rem; }
-
-.tag-live {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: #e8f5e9; color: var(--green);
-  border-radius: 50px; padding: 4px 12px;
-  font-size: 0.8rem; font-weight: 800;
-}
-.pulse-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--green); animation: pulse 1s infinite;
-}
-@keyframes pulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.4);opacity:0.7;} }
-
-.info-banner {
-  background: #fff8e1; border: 2px solid var(--accent);
-  border-radius: 12px; padding: 12px 16px;
-  font-size: 0.9rem; font-weight: 700; color: #e65100;
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 16px;
-}
-
-/* scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--light); border-radius: 3px; }
-::-webkit-scrollbar-thumb { background: #9fa8da; border-radius: 3px; }
 </style>
 </head>
 <body>
 
-<div class="confetti-canvas" id="confettiCanvas"></div>
-<div class="toast" id="toast"></div>
+<div id="toast" class="toast"></div>
 
-<!-- ===== ROLE SELECTOR ===== -->
 <div id="roleSelector">
   <div style="text-align:center">
     <div class="role-logo">📚</div>
     <div class="role-title">Taller de Ortografía</div>
-    <div class="role-sub" style="margin-top:6px;">¿Quién eres hoy?</div>
+    <div class="role-sub">Selecciona tu perfil</div>
   </div>
   <div class="role-cards">
     <div class="role-card" onclick="selectRole('student')">
       <span class="icon">🎒</span>
       <span class="label">Soy Alumno</span>
-      <span class="desc">Ingresa tu nombre y únete al taller</span>
+      <span class="desc">Únete con tu nombre</span>
     </div>
     <div class="role-card" onclick="selectRole('teacher')">
       <span class="icon">👩‍🏫</span>
       <span class="label">Soy Profesor</span>
-      <span class="desc">Controla la sala y da inicio</span>
+      <span class="desc">Controla la sesión</span>
     </div>
   </div>
 </div>
 
-<!-- ===== STUDENT: JOIN ===== -->
 <div class="screen" id="scrStudentJoin">
   <div class="card">
     <div class="card-header">
       <div class="card-header-icon">🎒</div>
       <div>
-        <div class="card-header-title">¡Únete al Taller!</div>
-        <div class="card-header-sub">Escribe tu nombre para ingresar a la sala</div>
+        <div class="card-header-title">¡Bienvenido!</div>
+        <div class="card-header-sub">Ingresa tus datos para comenzar</div>
       </div>
     </div>
     <div class="card-body">
-      <div class="join-center">
-        <div class="join-avatar-big" id="joinAvatar">?</div>
-        <div style="width:100%">
-          <div class="field-label">Tu nombre completo</div>
-          <input class="text-input" id="studentNameInput" placeholder="Ej: María González"
-            maxlength="40" oninput="updateAvatar()" onkeydown="if(event.key==='Enter') joinRoom()">
-          <div class="error-text" id="joinError" style="margin-top:6px;"></div>
-        </div>
-        <button class="btn btn-accent btn-big btn-full" onclick="joinRoom()">
-          ✅ Ingresar al Salón
-        </button>
-        <div style="font-size:0.82rem;color:#9fa8da;text-align:center;font-weight:700;">
-          Capacidad: hasta 40 alumnos por sesión
-        </div>
-      </div>
+      <div class="field-label">Nombre completo</div>
+      <input class="text-input" id="studentNameInput" placeholder="Ej: María Pérez" maxlength="40">
+      <div id="joinError" style="color:var(--red); font-size:0.85rem; margin-top:8px; font-weight:700;"></div>
+      <button class="btn btn-accent btn-big btn-full" style="margin-top:20px;" onclick="joinRoom()">Entrar al Salón</button>
     </div>
   </div>
 </div>
 
-<!-- ===== STUDENT: WAITING ===== -->
 <div class="screen" id="scrStudentWaiting">
   <div class="card">
     <div class="card-header">
       <div class="card-header-icon">⏳</div>
       <div>
-        <div class="card-header-title" id="waitTitle">¡Ya estás dentro!</div>
-        <div class="card-header-sub">Espera a que el profesor inicie el taller</div>
+        <div class="card-header-title">Sala de Espera</div>
+        <div class="card-header-sub">Estás registrado como: <strong id="waitName"></strong></div>
       </div>
     </div>
-    <div class="card-body">
-      <div class="info-banner">
-        🏷️ Registrado como: <strong id="waitName">—</strong>
-      </div>
-      <div class="waiting-msg">
-        <div class="spinner"></div>
-        <div style="font-weight:800;color:var(--navy);font-size:1rem;">Esperando al profesor...</div>
-        <div style="font-size:0.85rem;color:#78909c;font-weight:600;">El taller comenzará en cualquier momento</div>
-      </div>
-      <div class="section-label">Compañeros en la sala</div>
-      <div class="student-pill-list" id="waitingPeerList"></div>
-      <div style="margin-top:8px;font-size:0.82rem;color:#9fa8da;font-weight:700;" id="peerCount">0 alumnos conectados</div>
+    <div class="card-body" style="text-align:center">
+      <div class="spinner" style="margin:20px auto;"></div>
+      <p style="font-weight:800; color:var(--navy);">Esperando a que el profesor inicie el taller...</p>
+      <div class="student-pill-list" id="waitingPeerList" style="margin-top:30px; justify-content:center;"></div>
     </div>
   </div>
 </div>
 
-<!-- ===== STUDENT: EXERCISE ===== -->
 <div class="screen" id="scrStudentExercise">
   <div class="card">
     <div class="card-header">
       <div class="card-header-icon">✏️</div>
       <div>
-        <div class="card-header-title">Taller de Ortografía</div>
+        <div class="card-header-title">Taller en Curso</div>
         <div class="card-header-sub" id="exStudentName"></div>
       </div>
     </div>
     <div class="card-body">
-      <div class="timer-wrap">
-        <div class="timer-bar-bg">
-          <div class="timer-bar-fill" id="studentTimerBar" style="width:100%"></div>
-        </div>
-        <div class="timer-text" id="studentTimerText">5:00</div>
-      </div>
-      <div class="hint-pills">
-        <span class="hint-pill">b / v</span>
-        <span class="hint-pill">m / n</span>
-        <span class="hint-pill">c / s</span>
-        <span class="hint-pill">g / j</span>
-        <span class="hint-pill">z / s</span>
-        <span class="hint-pill">f / p</span>
-      </div>
+      <div class="timer-bar-bg"><div class="timer-bar-fill" id="studentTimerBar" style="width:100%"></div></div>
+      <div class="timer-text" id="studentTimerText">5:00</div>
       <div class="paragraph-box" id="studentExercise"></div>
       <div id="submitArea" style="text-align:center;">
-        <button class="btn btn-green btn-big" id="studentSubmitBtn" onclick="studentSubmit()">
-          📨 Enviar Mis Respuestas
-        </button>
+        <button class="btn btn-green btn-big" onclick="submitAnswers()">Enviar Respuestas</button>
       </div>
-      <div id="submitDoneMsg" style="display:none;text-align:center;padding:16px;">
-        <div style="font-size:2rem">🎉</div>
-        <div style="font-family:'Fredoka One',cursive;font-size:1.3rem;color:var(--green);margin:6px 0;">¡Respuestas enviadas!</div>
-        <div style="font-size:0.9rem;color:#78909c;font-weight:700;">Espera a que todos terminen para ver los resultados</div>
+      <div id="submitDoneMsg" style="display:none; text-align:center; color:var(--green); font-weight:800;">
+        ¡Respuestas enviadas correctamente!
       </div>
     </div>
   </div>
 </div>
 
-<!-- ===== STUDENT: RESULTS ===== -->
-<div class="screen" id="scrStudentResults">
-  <div class="card">
-    <div class="card-header">
-      <div class="card-header-icon">🏆</div>
-      <div>
-        <div class="card-header-title">Resultados del Taller</div>
-        <div class="card-header-sub">Puntaje máximo: 10,000 puntos</div>
-      </div>
-    </div>
-    <div class="card-body">
-      <div id="myResultBanner" style="margin-bottom:20px;"></div>
-      <div class="podium" id="studentPodium"></div>
-      <div class="section-label">Tabla completa</div>
-      <div class="results-list" id="studentResultsList"></div>
-      <div style="text-align:center;margin-top:24px;">
-        <button class="btn btn-navy" onclick="location.reload()">🔄 Volver al Inicio</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== TEACHER: LOBBY ===== -->
 <div class="screen" id="scrTeacherLobby">
   <div class="card">
     <div class="card-header">
       <div class="card-header-icon">👩‍🏫</div>
       <div>
         <div class="card-header-title">Panel del Profesor</div>
-        <div class="card-header-sub">Sala de espera — Alumnos ingresando</div>
+        <div class="card-header-sub">Alumnos conectándose en tiempo real</div>
       </div>
     </div>
     <div class="card-body">
-      <div class="stats-row">
-        <div class="stat-box">
-          <div class="stat-num" id="statJoined">0</div>
-          <div class="stat-label">Conectados</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-num" id="statMax">40</div>
-          <div class="stat-label">Capacidad</div>
-        </div>
-        <div class="stat-box">
-          <div class="tag-live"><div class="pulse-dot"></div>EN VIVO</div>
-          <div class="stat-label" style="margin-top:6px;">Estado</div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <div class="section-label" style="margin-bottom:0">Alumnos en la sala</div>
-        <button class="btn btn-navy" style="font-size:0.78rem;padding:6px 14px;" onclick="updateTeacherLobby()">
-          🔄 Actualizar lista
-        </button>
-      </div>
       <div class="teacher-grid" id="teacherStudentGrid"></div>
-      <hr class="divider">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-        <div style="font-size:0.88rem;font-weight:700;color:#78909c;">
-          El taller dura <strong>5 minutos</strong>. Todos comienzan al mismo tiempo.
-        </div>
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
-          <button class="btn btn-red" onclick="resetRoom()" title="Borrar sala y comenzar de cero" style="font-size:0.85rem;padding:10px 16px;">
-            🗑 Limpiar Sala
-          </button>
-          <button class="btn btn-accent btn-big" id="startTallerBtn" onclick="teacherStartTaller()" disabled>
-            🚀 Iniciar Taller
-          </button>
-        </div>
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button class="btn btn-red" onclick="resetRoom()">Limpiar Sala</button>
+        <button class="btn btn-accent btn-big" id="startTallerBtn" onclick="teacherStartTaller()" disabled>Iniciar Taller</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ===== TEACHER: MONITOR ===== -->
 <div class="screen" id="scrTeacherMonitor">
   <div class="card">
     <div class="card-header">
       <div class="card-header-icon">📊</div>
       <div>
-        <div class="card-header-title">Monitor en Tiempo Real</div>
-        <div class="card-header-sub" id="teacherTimerLabel">Tiempo restante del taller</div>
+        <div class="card-header-title">Monitor en Vivo</div>
+        <div class="card-header-sub">Seguimiento del progreso</div>
       </div>
     </div>
     <div class="card-body">
-      <div class="timer-wrap">
-        <div class="timer-bar-bg">
-          <div class="timer-bar-fill" id="teacherTimerBar" style="width:100%"></div>
-        </div>
-        <div class="timer-text" id="teacherTimerText">5:00</div>
-      </div>
-      <div class="stats-row">
-        <div class="stat-box">
-          <div class="stat-num" id="monTotal">0</div>
-          <div class="stat-label">Total</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-num" id="monDone" style="color:var(--green)">0</div>
-          <div class="stat-label">Enviaron</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-num" id="monPending" style="color:var(--orange)">0</div>
-          <div class="stat-label">Pendientes</div>
-        </div>
-      </div>
-      <div class="section-label">Estado por alumno</div>
-      <div class="teacher-grid" id="monitorGrid"></div>
-      <hr class="divider">
-      <div style="text-align:center;">
-        <button class="btn btn-red btn-big" onclick="teacherEndNow()">⏹ Cerrar Taller Ahora</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== TEACHER: RESULTS ===== -->
-<div class="screen" id="scrTeacherResults">
-  <div class="card">
-    <div class="card-header">
-      <div class="card-header-icon">🏆</div>
-      <div>
-        <div class="card-header-title">Resultados Finales</div>
-        <div class="card-header-sub">Puntaje máximo: 10,000 puntos</div>
-      </div>
-    </div>
-    <div class="card-body">
-      <div class="podium" id="teacherPodium"></div>
-      <div class="section-label">Tabla completa — Mayor a menor puntaje</div>
-      <div class="results-list" id="teacherResultsList"></div>
-      <div style="text-align:center;margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-        <button class="btn btn-navy btn-big" onclick="resetRoom()">🔄 Nueva Sesión</button>
-      </div>
+      <div class="timer-bar-bg"><div class="timer-bar-fill" id="teacherTimerBar" style="width:100%"></div></div>
+      <div class="timer-text" id="teacherTimerText">5:00</div>
+      <div class="teacher-grid" id="monitorGrid" style="margin-top:20px;"></div>
+      <button class="btn btn-red btn-full" style="margin-top:20px;" onclick="teacherEndNow()">Finalizar Taller Ahora</button>
     </div>
   </div>
 </div>
 
 <script>
-// ============================================================
-//  CONSTANTS & STATE
-// ============================================================
-const STORAGE_KEY  = 'taller_ortografia_room_v4';
-const MAX_STUDENTS = 40;
-const TOTAL_TIME   = 300;
-
+const STORAGE_KEY = 'taller_ortografia_v5';
+const TOTAL_TIME = 300;
 const ANSWERS = {
-  b0:'v', b1:'b', b2:'b', b3:'j', b4:'n',
-  b5:'g', b6:'m', b7:'z', b8:'s', b9:'p',
-  b10:'m', b11:'j', b12:'c', b13:'g', b14:'v',
-  b15:'b', b16:'z', b17:'m', b18:'m', b19:'f'
+  b0:'v', b1:'b', b2:'b', b3:'j', b4:'n', b5:'g', b6:'m', b7:'z', b8:'s', b9:'p',
+  b10:'m', b11:'j', b12:'c', b13:'g', b14:'v', b15:'b', b16:'z', b17:'m', b18:'m', b19:'f'
 };
-const TOTAL_BLANKS = Object.keys(ANSWERS).length;
 
-let myName    = '';
-let myRole    = '';
-let timerInt  = null;
-let pollInt   = null;
-let timeLeft  = TOTAL_TIME;
+let myName = '';
+let myRole = '';
+let timeLeft = TOTAL_TIME;
+let timerInt = null;
 let submitted = false;
-let lastPhase = '';   // track phase changes
 
-// ============================================================
-//  ROOM HELPERS
-// ============================================================
-function emptyRoom() {
-  return { phase:'lobby', students:{}, startTime:null, endTime:null, ts:Date.now() };
-}
+// --- SISTEMA DE COMUNICACIÓN ---
 function loadRoom() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : emptyRoom();
-  } catch { return emptyRoom(); }
+  const raw = localStorage.getItem(STORAGE_KEY);
+  return raw ? JSON.parse(raw) : { phase:'lobby', students:{}, startTime:null };
 }
+
 function saveRoom(room) {
   room.ts = Date.now();
-  // Write twice with tiny gap to ensure storage event fires reliably cross-tab
   localStorage.setItem(STORAGE_KEY, JSON.stringify(room));
-}
-function stopAll() {
-  if (timerInt) { clearInterval(timerInt); timerInt = null; }
-  if (pollInt)  { clearInterval(pollInt);  pollInt  = null; }
+  // Disparar evento manual para la misma pestaña
+  window.dispatchEvent(new CustomEvent('roomUpdate', { detail: room }));
 }
 
-// ============================================================
-//  CROSS-TAB SYNC — storage event fires when OTHER tab writes
-// ============================================================
-window.addEventListener('storage', (e) => {
-  if (e.key !== STORAGE_KEY) return;
-  const room = loadRoom();
-
-  if (myRole === 'teacher') {
-    handleTeacherSync(room);
-  } else if (myRole === 'student') {
-    handleStudentSync(room);
-  }
-});
-
-// Also force-poll every 500ms as fallback (same-tab writes don't fire storage event)
-function startForcePoll(handler) {
-  if (pollInt) clearInterval(pollInt);
-  pollInt = setInterval(() => {
-    handler(loadRoom());
-  }, 500);
+function initSync() {
+  const handler = (room) => {
+    if (myRole === 'teacher') handleTeacherSync(room);
+    if (myRole === 'student') handleStudentSync(room);
+  };
+  window.addEventListener('storage', () => handler(loadRoom()));
+  window.addEventListener('roomUpdate', (e) => handler(e.detail));
+  setInterval(() => handler(loadRoom()), 1000); // Polling de respaldo
 }
 
-// ============================================================
-//  ROLE SELECTION
-// ============================================================
+// --- LOGICA DE ROLES ---
 function selectRole(role) {
   myRole = role;
   document.getElementById('roleSelector').style.display = 'none';
-
-  if (role === 'student') {
-    showScreen('scrStudentJoin');
-  } else {
-    let room = loadRoom();
-    if (room.phase === 'results') { room = emptyRoom(); saveRoom(room); }
+  initSync();
+  if (role === 'student') showScreen('scrStudentJoin');
+  else {
+    const room = loadRoom();
+    if (room.phase === 'results') saveRoom({ phase:'lobby', students:{}, startTime:null });
     showScreen('scrTeacherLobby');
-    lastPhase = 'lobby';
-    setTimeout(() => {
-      renderTeacherLobby();
-      startForcePoll(handleTeacherSync);
-    }, 100);
+    renderTeacherLobby(loadRoom());
   }
 }
 
-// ============================================================
-//  TEACHER SYNC HANDLER
-// ============================================================
-function handleTeacherSync(room) {
-  if (room.phase === 'lobby') {
-    renderTeacherLobby(room);
-    lastPhase = 'lobby';
-  } else if (room.phase === 'active' && lastPhase !== 'active') {
-    lastPhase = 'active';
-    stopAll();
-    initTeacherMonitor(room);
-  } else if (room.phase === 'active') {
-    renderMonitorGrid(room);
-  } else if (room.phase === 'results' && lastPhase !== 'results') {
-    lastPhase = 'results';
-    stopAll();
-    renderTeacherResults(loadRoom());
-  }
-}
-
-// ============================================================
-//  TEACHER — LOBBY
-// ============================================================
-function renderTeacherLobby(room) {
-  if (!room) room = loadRoom();
-  const names = Object.keys(room.students);
-  const n     = names.length;
-
-  const statEl = document.getElementById('statJoined');
-  const btnEl  = document.getElementById('startTallerBtn');
-  const gridEl = document.getElementById('teacherStudentGrid');
-  if (!statEl || !btnEl || !gridEl) return;
-
-  statEl.textContent    = n;
-  btnEl.disabled        = (n < 1);
-  btnEl.style.opacity   = (n < 1) ? '0.45' : '1';
-  btnEl.style.cursor    = (n < 1) ? 'not-allowed' : 'pointer';
-
-  gridEl.innerHTML = names.length
-    ? names.map(s => `
-        <div class="teacher-student-card">
-          <div class="t-avatar">${s[0].toUpperCase()}</div>
-          <div>
-            <div class="t-name">${s}</div>
-            <div class="t-status ok">✓ Conectado</div>
-          </div>
-        </div>`).join('')
-    : '<div style="color:#9fa8da;font-weight:700;padding:8px 0;">Esperando alumnos...</div>';
-}
-
-function teacherStartTaller() {
-  const room  = loadRoom();
-  const names = Object.keys(room.students);
-  if (names.length < 1) { showToast('⚠️ Aún no hay alumnos en la sala.'); return; }
-
-  stopAll();
-  room.phase     = 'active';
-  room.startTime = Date.now();
-  saveRoom(room);
-  lastPhase = 'active';
-  initTeacherMonitor(room);
-}
-
-// ============================================================
-//  TEACHER — MONITOR
-// ============================================================
-function initTeacherMonitor(room) {
-  stopAll();
-  showScreen('scrTeacherMonitor');
-
-  if (!room) room = loadRoom();
-  const elapsed = Math.floor((Date.now() - room.startTime) / 1000);
-  timeLeft = Math.max(0, TOTAL_TIME - elapsed);
-
-  renderTeacherTimer();
-  renderMonitorGrid(room);
-
-  timerInt = setInterval(() => {
-    timeLeft--;
-    renderTeacherTimer();
-    if (timeLeft <= 0) { clearInterval(timerInt); timerInt = null; teacherEndNow(); }
-  }, 1000);
-
-  startForcePoll(handleTeacherSync);
-}
-
-function renderTeacherTimer() {
-  const m   = Math.floor(timeLeft / 60), s = timeLeft % 60;
-  const txt = document.getElementById('teacherTimerText');
-  const bar = document.getElementById('teacherTimerBar');
-  if (!txt || !bar) return;
-  txt.textContent = `${m}:${s.toString().padStart(2,'0')}`;
-  txt.className   = 'timer-text' + (timeLeft <= 60 ? ' urgent' : '');
-  bar.style.width = (timeLeft / TOTAL_TIME * 100) + '%';
-}
-
-function renderMonitorGrid(room) {
-  if (!room) room = loadRoom();
-  const st    = room.students;
-  const names = Object.keys(st);
-  const done  = names.filter(n => st[n].submitted).length;
-
-  const elTotal   = document.getElementById('monTotal');
-  const elDone    = document.getElementById('monDone');
-  const elPending = document.getElementById('monPending');
-  const elGrid    = document.getElementById('monitorGrid');
-  if (!elTotal) return;
-
-  elTotal.textContent   = names.length;
-  elDone.textContent    = done;
-  elPending.textContent = names.length - done;
-
-  elGrid.innerHTML = names.map(n => {
-    const info = st[n];
-    return `
-      <div class="teacher-student-card ${info.submitted ? 'done' : ''}">
-        <div class="t-avatar">${n[0].toUpperCase()}</div>
-        <div>
-          <div class="t-name">${n}</div>
-          <div class="t-status ${info.submitted ? 'ok' : ''}">
-            ${info.submitted ? `✅ ${(info.score||0).toLocaleString()} pts` : '⏳ En progreso'}
-          </div>
-        </div>
-      </div>`;
-  }).join('');
-}
-
-function teacherEndNow() {
-  stopAll();
-  const room   = loadRoom();
-  room.phase   = 'results';
-  room.endTime = Date.now();
-  saveRoom(room);
-  lastPhase = 'results';
-  renderTeacherResults(room);
-}
-
-function renderTeacherResults(room) {
-  stopAll();
-  showScreen('scrTeacherResults');
-  buildResultsUI(room, 'teacherPodium', 'teacherResultsList');
-  launchConfetti();
-}
-
-// ============================================================
-//  STUDENT — JOIN
-// ============================================================
-function updateAvatar() {
-  const val = document.getElementById('studentNameInput').value.trim();
-  document.getElementById('joinAvatar').textContent = val ? val[0].toUpperCase() : '?';
-}
-
+// --- STUDENT ACTIONS ---
 function joinRoom() {
-  const inp  = document.getElementById('studentNameInput');
-  const name = inp.value.trim();
-  const err  = document.getElementById('joinError');
-
-  if (!name) { err.textContent = '⚠️ Escribe tu nombre para continuar.'; return; }
-
+  const name = document.getElementById('studentNameInput').value.trim();
+  if (!name) return;
   const room = loadRoom();
-
-  if (room.phase === 'results') { err.textContent = '⚠️ El taller ya terminó. Espera una nueva sesión.'; return; }
-  if (room.phase === 'active')  { err.textContent = '⚠️ El taller ya comenzó, no puedes unirte ahora.'; return; }
-  if (room.students[name])      { err.textContent = '⚠️ Ese nombre ya está en la sala. Elige otro.'; return; }
-  if (Object.keys(room.students).length >= MAX_STUDENTS) {
-    err.textContent = `⚠️ La sala está llena (${MAX_STUDENTS} alumnos máximo).`; return;
+  if (room.students[name]) {
+    document.getElementById('joinError').textContent = "Ese nombre ya existe";
+    return;
   }
-
   myName = name;
-  room.students[name] = { joined: Date.now(), score: 0, correct: 0, submitted: false };
+  room.students[name] = { score:0, correct:0, submitted:false };
   saveRoom(room);
-  err.textContent = '';
-
   document.getElementById('waitName').textContent = name;
   showScreen('scrStudentWaiting');
-  lastPhase = 'lobby';
-  renderPeerList(room);
-  startForcePoll(handleStudentSync);
 }
 
-// ============================================================
-//  STUDENT SYNC HANDLER
-// ============================================================
 function handleStudentSync(room) {
-  if (room.phase === 'lobby') {
-    renderPeerList(room);
-    lastPhase = 'lobby';
-  } else if (room.phase === 'active' && lastPhase !== 'active' && !submitted) {
-    lastPhase = 'active';
-    stopAll();
-    initStudentExercise(room);
-  } else if (room.phase === 'results' && lastPhase !== 'results') {
-    lastPhase = 'results';
-    stopAll();
-    renderStudentResults(loadRoom());
-  }
+  if (room.phase === 'active' && !submitted && !timerInt) initStudentExercise(room);
 }
 
-// ============================================================
-//  STUDENT — WAITING ROOM
-// ============================================================
-function renderPeerList(room) {
-  if (!room) room = loadRoom();
-  const names = Object.keys(room.students);
-  const list  = document.getElementById('waitingPeerList');
-  const count = document.getElementById('peerCount');
-  if (!list) return;
-  list.innerHTML = names.map(n => `
-    <div class="student-pill">
-      <div class="pill-dot"></div>${n}${n === myName ? ' (tú)' : ''}
-    </div>`).join('');
-  if (count) count.textContent = `${names.length} alumno(s) conectado(s)`;
-}
-
-// ============================================================
-//  STUDENT — EXERCISE
-// ============================================================
 function initStudentExercise(room) {
-  stopAll();
-  document.getElementById('exStudentName').textContent = `¡Hola, ${myName}!`;
   showScreen('scrStudentExercise');
   buildExerciseHTML();
-
   const elapsed = Math.floor((Date.now() - room.startTime) / 1000);
   timeLeft = Math.max(0, TOTAL_TIME - elapsed);
-  renderStudentTimer();
-
   timerInt = setInterval(() => {
     timeLeft--;
-    renderStudentTimer();
-    if (timeLeft <= 0) { clearInterval(timerInt); timerInt = null; submitAnswers(true); }
+    const m = Math.floor(timeLeft/60), s = timeLeft%60;
+    document.getElementById('studentTimerText').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+    document.getElementById('studentTimerBar').style.width = (timeLeft/TOTAL_TIME*100)+'%';
+    if (timeLeft <= 0) submitAnswers();
   }, 1000);
-
-  // Poll for teacher ending early
-  startForcePoll(handleStudentSync);
-}
-
-function renderStudentTimer() {
-  const m   = Math.floor(timeLeft / 60), s = timeLeft % 60;
-  const txt = document.getElementById('studentTimerText');
-  const bar = document.getElementById('studentTimerBar');
-  if (!txt || !bar) return;
-  txt.textContent = `${m}:${s.toString().padStart(2,'0')}`;
-  txt.className   = 'timer-text' + (timeLeft <= 60 ? ' urgent' : '');
-  bar.style.width = (timeLeft / TOTAL_TIME * 100) + '%';
 }
 
 function buildExerciseHTML() {
   document.getElementById('studentExercise').innerHTML = `
-    El jo<input class="blank-inp" id="b0" maxlength="1" placeholder="_">en
-    o<input class="blank-inp" id="b1" maxlength="1" placeholder="_">ser<input class="blank-inp" id="b2" maxlength="1" placeholder="_">aba
-    los pá<input class="blank-inp" id="b3" maxlength="1" placeholder="_">aros
-    desde su ve<input class="blank-inp" id="b4" maxlength="1" placeholder="_">tana.
-    Notó que al<input class="blank-inp" id="b5" maxlength="1" placeholder="_">unos
-    tenían plu<input class="blank-inp" id="b6" maxlength="1" placeholder="_">as
-    de color a<input class="blank-inp" id="b7" maxlength="1" placeholder="_">ul
-    o<input class="blank-inp" id="b8" maxlength="1" placeholder="_">curo.
-    De re<input class="blank-inp" id="b9" maxlength="1" placeholder="_">ente
-    e<input class="blank-inp" id="b10" maxlength="1" placeholder="_">pezó
-    a llover y los pá<input class="blank-inp" id="b11" maxlength="1" placeholder="_">aros
-    bus<input class="blank-inp" id="b12" maxlength="1" placeholder="_">aron
-    refu<input class="blank-inp" id="b13" maxlength="1" placeholder="_">io
-    en las ramas. El jo<input class="blank-inp" id="b14" maxlength="1" placeholder="_">en
-    sa<input class="blank-inp" id="b15" maxlength="1" placeholder="_">ía
-    que la naturale<input class="blank-inp" id="b16" maxlength="1" placeholder="_">a
-    sie<input class="blank-inp" id="b17" maxlength="1" placeholder="_">pre
-    tiene algo her<input class="blank-inp" id="b18" maxlength="1" placeholder="_">oso
-    que o<input class="blank-inp" id="b19" maxlength="1" placeholder="_">recer.
+    El jo<input class="blank-inp" id="b0" maxlength="1">en o<input class="blank-inp" id="b1" maxlength="1">ser<input class="blank-inp" id="b2" maxlength="1">aba los pá<input class="blank-inp" id="b3" maxlength="1">aros desde su ve<input class="blank-inp" id="b4" maxlength="1">tana. 
+    Notó que al<input class="blank-inp" id="b5" maxlength="1">unos tenían plu<input class="blank-inp" id="b6" maxlength="1">as de color a<input class="blank-inp" id="b7" maxlength="1">ul o<input class="blank-inp" id="b8" maxlength="1">curo.
   `;
-  document.querySelectorAll('.blank-inp').forEach(inp => {
-    inp.addEventListener('focus', () => {
-      if (!inp.classList.contains('ok') && !inp.classList.contains('err'))
-        inp.style.borderBottomColor = '#ffd600';
-    });
-    inp.addEventListener('blur', () => {
-      if (!inp.classList.contains('ok') && !inp.classList.contains('err'))
-        inp.style.borderBottomColor = 'var(--navy)';
-    });
-    inp.addEventListener('input', () => {
-      if (inp.value.length === 1) {
-        const id  = parseInt(inp.id.replace('b',''));
-        const nxt = document.getElementById('b' + (id + 1));
-        if (nxt && !nxt.disabled) nxt.focus();
-      }
-    });
-  });
 }
 
-function submitAnswers(auto = false) {
+function submitAnswers() {
   if (submitted) return;
   submitted = true;
-  if (timerInt) { clearInterval(timerInt); timerInt = null; }
-
+  clearInterval(timerInt);
   let correct = 0;
-  Object.entries(ANSWERS).forEach(([id, ans]) => {
-    const inp = document.getElementById(id);
-    if (!inp) return;
-    if (inp.value.trim().toLowerCase() === ans) {
-      correct++; inp.classList.add('ok');
-    } else {
-      inp.classList.add('err'); inp.value = ans;
-    }
-    inp.disabled = true;
+  Object.keys(ANSWERS).forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value.toLowerCase() === ANSWERS[id]) correct++;
   });
-
-  const base  = Math.round((correct / TOTAL_BLANKS) * 8000);
-  const bonus = Math.round((timeLeft / TOTAL_TIME) * 2000);
-  const total = Math.min(base + bonus, 10000);
-
   const room = loadRoom();
   if (room.students[myName]) {
-    room.students[myName].correct   = correct;
-    room.students[myName].score     = total;
     room.students[myName].submitted = true;
+    room.students[myName].correct = correct;
+    room.students[myName].score = correct * 500;
   }
   saveRoom(room);
-
-  document.getElementById('submitArea').style.display    = 'none';
+  document.getElementById('submitArea').style.display = 'none';
   document.getElementById('submitDoneMsg').style.display = 'block';
-  showToast(`✅ ${correct}/${TOTAL_BLANKS} correctas · ${total.toLocaleString()} pts`);
 }
 
-// ============================================================
-//  STUDENT — RESULTS
-// ============================================================
-function renderStudentResults(room) {
-  stopAll();
-  showScreen('scrStudentResults');
-  const me = room.students[myName] || {};
-  document.getElementById('myResultBanner').innerHTML = `
-    <div style="background:var(--light);border-radius:14px;padding:16px 20px;
-                display:flex;align-items:center;gap:14px;margin-bottom:4px;">
-      <div style="font-size:2.4rem;">${scoreEmoji(me.score)}</div>
-      <div>
-        <div style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--navy);">
-          Tu resultado, ${myName}
-        </div>
-        <div style="font-size:0.9rem;color:#78909c;font-weight:700;">
-          ${me.correct||0}/${TOTAL_BLANKS} correctas ·
-          <strong style="color:var(--navy);">${(me.score||0).toLocaleString()} puntos</strong>
-        </div>
-      </div>
-    </div>`;
-  buildResultsUI(room, 'studentPodium', 'studentResultsList');
-  launchConfetti();
+// --- TEACHER ACTIONS ---
+function handleTeacherSync(room) {
+  if (room.phase === 'lobby') renderTeacherLobby(room);
+  else if (room.phase === 'active') renderMonitorGrid(room);
 }
 
-function scoreEmoji(s) {
-  if (s >= 9000) return '🥇';
-  if (s >= 7000) return '🎉';
-  if (s >= 5000) return '👍';
-  return '📝';
+function renderTeacherLobby(room) {
+  const grid = document.getElementById('teacherStudentGrid');
+  const names = Object.keys(room.students);
+  grid.innerHTML = names.map(n => `<div class="teacher-student-card"><div class="t-avatar">${n[0]}</div><div class="t-name">${n}</div></div>`).join('');
+  document.getElementById('startTallerBtn').disabled = names.length === 0;
 }
 
-// ============================================================
-//  SHARED RESULTS RENDERER
-// ============================================================
-function buildResultsUI(room, podiumId, listId) {
-  const st     = room.students;
-  const sorted = Object.keys(st).sort((a,b) => (st[b].score||0) - (st[a].score||0));
-  const top    = sorted.slice(0, 3);
-  const order  = top.length >= 3 ? [1,0,2] : top.length === 2 ? [1,0] : [0];
-  const avCls  = ['p2-av','p1-av','p3-av'];
-  const blCls  = ['pb2','pb1','pb3'];
-  const emojis = ['🥈','🥇','🥉'];
+function teacherStartTaller() {
+  const room = loadRoom();
+  room.phase = 'active';
+  room.startTime = Date.now();
+  saveRoom(room);
+  showScreen('scrTeacherMonitor');
+}
 
-  document.getElementById(podiumId).innerHTML = order.map(i => {
-    if (!top[i]) return '';
-    const s = top[i], info = st[s];
-    return `
-      <div class="p-place">
-        <div class="p-avatar ${avCls[i]}">${s[0].toUpperCase()}</div>
-        <div class="p-name">${s}</div>
-        <div class="p-block ${blCls[i]}">${emojis[i]}<br>${(info.score||0).toLocaleString()}</div>
-      </div>`;
-  }).join('');
-
-  document.getElementById(listId).innerHTML = sorted.map((s, i) => {
-    const info = st[s];
-    const pct  = ((info.score||0) / 10000) * 100;
-    const rrCls = i===0?'rr1':i===1?'rr2':i===2?'rr3':'';
-    return `
-      <div class="result-row">
-        <div class="result-rank ${rrCls}">${i+1}</div>
-        <div style="flex:1">
-          <div class="result-name">${s}</div>
-          <div class="result-correct">${info.correct||0}/${TOTAL_BLANKS} correctas
-            ${info.submitted ? '' : '· <em>No entregó</em>'}
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div class="score-mini-bar">
-            <div class="score-mini-fill" style="width:${pct}%"></div>
-          </div>
-          <div class="result-score">${(info.score||0).toLocaleString()}</div>
-        </div>
-      </div>`;
+function renderMonitorGrid(room) {
+  const grid = document.getElementById('monitorGrid');
+  grid.innerHTML = Object.keys(room.students).map(n => {
+    const s = room.students[n];
+    return `<div class="teacher-student-card ${s.submitted?'done':''}"><div class="t-name">${n}</div><div class="t-status">${s.submitted?'Listo':'Escribiendo...'}</div></div>`;
   }).join('');
 }
 
-// ============================================================
-//  RESET
-// ============================================================
+function teacherEndNow() {
+  const room = loadRoom();
+  room.phase = 'lobby';
+  room.students = {};
+  saveRoom(room);
+  location.reload();
+}
+
 function resetRoom() {
-  stopAll();
-  saveRoom(emptyRoom());
-  submitted = false; myName = ''; lastPhase = '';
-  showToast('🗑 Sala limpiada. Recargando...');
-  setTimeout(() => location.reload(), 1200);
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
 }
 
-// ============================================================
-//  UI HELPERS
-// ============================================================
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  const el = document.getElementById(id);
-  if (el) el.classList.add('active');
-  window.scrollTo(0, 0);
-}
-
-function showToast(msg, dur = 3500) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), dur);
-}
-
-function launchConfetti() {
-  const canvas = document.getElementById('confettiCanvas');
-  canvas.innerHTML = '';
-  const colors = ['#ffd600','#1a237e','#00c853','#f44336','#5c6bc0','#ff7043','#ffffff'];
-  for (let i = 0; i < 110; i++) {
-    const p    = document.createElement('div');
-    const size = Math.random() * 10 + 5;
-    p.style.cssText = `
-      position:absolute; top:${Math.random()*-5}%; left:${Math.random()*100}%;
-      width:${size}px; height:${size}px;
-      background:${colors[Math.floor(Math.random()*colors.length)]};
-      border-radius:${Math.random()>0.4?'50%':'3px'};
-      animation:cffall ${1.5+Math.random()*2.5}s ${Math.random()*2}s linear forwards;
-    `;
-    canvas.appendChild(p);
-  }
-  const st = document.getElementById('cfanim') || document.createElement('style');
-  st.id = 'cfanim';
-  st.textContent = `@keyframes cffall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}`;
-  document.head.appendChild(st);
-  setTimeout(() => { canvas.innerHTML = ''; }, 6000);
+  document.getElementById(id).classList.add('active');
 }
 </script>
 </body>
