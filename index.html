@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Taller de Ortografía en Vivo</title>
+<title>Taller de Ortografía Pro</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap');
-:root { --navy: #1a237e; --blue: #3949ab; --accent: #ffd600; --green: #00c853; --red: #f44336; --white: #ffffff; --light: #e8eaf6; }
+:root { --navy: #1a237e; --blue: #3949ab; --accent: #ffd600; --green: #00c853; --red: #f44336; --white: #ffffff; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #0d1257 0%, #1a237e 50%, #283593 100%); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
 .screen { display: none; width: 100%; max-width: 800px; }
@@ -16,12 +16,12 @@ body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #0
 .card-body { padding: 25px; }
 .btn { padding: 12px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 10px; font-family: inherit; }
 .btn-accent { background: var(--accent); color: var(--navy); }
-.text-input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 10px; margin-bottom: 15px; }
-.paragraph-box { font-size: 1.2rem; line-height: 2.8; color: #222; background: #f9f9f9; padding: 20px; border-radius: 15px; border: 2px solid #eee; }
-.blank-inp { width: 35px; border: none; border-bottom: 2px solid var(--navy); text-align: center; font-weight: 900; color: var(--blue); outline: none; background: transparent; }
+.paragraph-box { font-size: 1.25rem; line-height: 2.8; color: #222; background: #f9f9f9; padding: 25px; border-radius: 15px; border: 2px solid #eee; }
+.blank-inp { width: 35px; border: none; border-bottom: 2px solid var(--navy); text-align: center; font-weight: 900; color: var(--blue); outline: none; background: transparent; transition: 0.3s; }
+.blank-inp.missing { border-bottom: 3px solid var(--red); background: #ffebee; }
+.timer-box { font-family: 'Fredoka One'; font-size: 2.2rem; text-align: center; color: var(--red); background: #fff1f1; padding: 10px; border-radius: 15px; margin-bottom: 15px; border: 2px solid var(--red); }
 .leaderboard { width: 100%; border-collapse: collapse; margin-top: 15px; }
 .leaderboard th, .leaderboard td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-.leaderboard tr.me { background: #fffde7; font-weight: bold; }
 #roleSelector { text-align: center; color: white; margin-top: 50px; }
 .role-btn { background: rgba(255,255,255,0.1); border: 2px solid white; color: white; padding: 20px; border-radius: 15px; cursor: pointer; margin: 10px; display: inline-block; width: 140px; }
 </style>
@@ -35,69 +35,61 @@ body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #0
 </div>
 
 <div class="screen" id="scrJoin">
-    <div class="card">
-        <div class="card-header"><h2>Registro</h2></div>
-        <div class="card-body"><input type="text" id="nameInp" class="text-input" placeholder="Tu nombre"><button class="btn btn-accent" onclick="join()">Entrar</button></div>
-    </div>
+    <div class="card"><div class="card-header"><h2>Registro</h2></div>
+    <div class="card-body"><input type="text" id="nameInp" style="width:100%; padding:12px; margin-bottom:10px;" placeholder="Tu nombre"><button class="btn btn-accent" onclick="join()">Entrar</button></div></div>
 </div>
 
 <div class="screen" id="scrWait">
-    <div class="card">
-        <div class="card-header"><h2>Sala de Espera</h2></div>
-        <div class="card-body" style="text-align:center"><p>Hola <strong><span id="stName"></span></strong>. Espera a que el profesor inicie el taller.</p></div>
-    </div>
+    <div class="card"><div class="card-body" style="text-align:center"><h2>Hola <span id="stName"></span></h2><p>Esperando que el profesor inicie el tiempo (10 min).</p></div></div>
 </div>
 
 <div class="screen" id="scrWork">
+    <div class="timer-box" id="timerStd">10:00</div>
     <div class="card">
         <div class="card-header"><h2>¡Completa el párrafo!</h2></div>
         <div class="card-body">
             <div class="paragraph-box" id="p1">
                 El jo<input class="blank-inp" id="q0" maxlength="1">en o<input class="blank-inp" id="q1" maxlength="1">ser<input class="blank-inp" id="q2" maxlength="1">aba el paisa<input class="blank-inp" id="q3" maxlength="1">e con mucha <input class="blank-inp" id="q4" maxlength="1">ida. 
-                Tenía que de<input class="blank-inp" id="q5" maxlength="1">idir si era me<input class="blank-inp" id="q6" maxlength="1">or <input class="blank-inp" id="q7" maxlength="1">ia<input class="blank-inp" id="q8" maxlength="11">ar en <input class="blank-inp" id="q9" maxlength="1">arco o en a<input class="blank-inp" id="q10" maxlength="11">ión. 
-                En su <input class="blank-inp" id="q11" maxlength="1">ia<input class="blank-inp" id="q12" maxlength="1">e, e<input class="blank-inp" id="q13" maxlength="1">itó todos los o<input class="blank-inp" id="q14" maxlength="11">stáculos. 
-                Fue una o<input class="blank-inp" id="q15" maxlength="1">ra de arte <input class="blank-inp" id="q16" maxlength="11">isual que de<input class="blank-inp" id="q17" maxlength="1">ía e<input class="blank-inp" id="q18" maxlength="1">hibir con <input class="blank-inp" id="q19" maxlength="1">alor.
+                Tenía que de<input class="blank-inp" id="q5" maxlength="1">idir si era me<input class="blank-inp" id="q6" maxlength="1">or <input class="blank-inp" id="q7" maxlength="1">ia<input class="blank-inp" id="q8" maxlength="1">ar en <input class="blank-inp" id="q9" maxlength="1">arco o en a<input class="blank-inp" id="q10" maxlength="1">ión. 
+                En su <input class="blank-inp" id="q11" maxlength="1">ia<input class="blank-inp" id="q12" maxlength="1">e, e<input class="blank-inp" id="q13" maxlength="1">itó todos los o<input class="blank-inp" id="q14" maxlength="1">stáculos. 
+                Fue una o<input class="blank-inp" id="q15" maxlength="1">ra de arte <input class="blank-inp" id="q16" maxlength="1">isual que de<input class="blank-inp" id="q17" maxlength="1">ía e<input class="blank-inp" id="q18" maxlength="1">hibir con <input class="blank-inp" id="q19" maxlength="1">alor.
             </div>
-            <button class="btn btn-accent" onclick="finish()">Enviar y Ver Puntajes</button>
+            <button class="btn btn-accent" style="margin-top:20px" onclick="validateAndFinish()">Enviar Respuestas</button>
         </div>
     </div>
 </div>
 
 <div class="screen" id="scrResults">
-    <div class="card">
-        <div class="card-header"><h2>Tabla de Posiciones en Vivo</h2></div>
-        <div class="card-body">
-            <h3 id="myFinalScore" style="text-align:center; color:var(--navy); margin-bottom:15px;"></h3>
-            <table class="leaderboard"><thead style="background:#f0f0f0"><tr><th>Pos</th><th>Nombre</th><th>Puntaje</th></tr></thead><tbody id="leaderBody"></tbody></table>
-            <button class="btn" onclick="location.reload()" style="background:#eee; margin-top:20px;">Refrescar Tabla</button>
-        </div>
-    </div>
+    <div class="card"><div class="card-header"><h2>Resultados Finales</h2></div>
+    <div class="card-body"><table class="leaderboard"><thead><tr><th>Pos</th><th>Nombre</th><th>Puntaje</th></tr></thead><tbody id="leaderBody"></tbody></table></div></div>
 </div>
 
 <div class="screen" id="scrTeacher">
+    <div class="timer-box" id="timerProf">10:00</div>
     <div class="card">
-        <div class="card-header"><h2>Panel del Profesor</h2></div>
+        <div class="card-header"><h2>Panel de Control</h2></div>
         <div class="card-body">
-            <button class="btn btn-accent" onclick="start()">🚀 INICIAR TALLER PARA TODOS</button>
-            <h3 style="margin-top:20px">Monitoreo de Alumnos:</h3>
-            <table class="leaderboard"><thead style="background:#f0f0f0"><tr><th>Alumno</th><th>Estado</th><th>Puntaje</th><th>Acción</th></tr></thead><tbody id="profBody"></tbody></table>
+            <button class="btn btn-accent" id="btnStart" onclick="startTaller()">🚀 INICIAR 10 MINUTOS PARA TODOS</button>
+            <h3 style="margin-top:20px">Alumnos en vivo:</h3>
+            <div id="profList"></div>
             <button class="btn" style="background:var(--red); color:white; margin-top:30px" onclick="localStorage.clear();location.reload();">Reiniciar Todo</button>
         </div>
     </div>
 </div>
 
 <script>
-const KEY = 'taller_vFINAL_sync';
-const ANSWERS = ['v','b','v','j','v','d','j','v','j','b','v','v','j','v','b','b','v','b','x','v']; 
-let role = '', myName = '';
+const KEY = 'taller_vFINAL_ULTIMATE';
+const DURATION = 600; // 10 minutos
+const ANSWERS = ['v','b','v','j','v','d','j','v','j','b','v','v','j','v','b','b','v','b','x','v'];
+let role = '', myName = '', syncInt;
 
-function getRoom() { return JSON.parse(localStorage.getItem(KEY)) || { status: 'lobby', students: {} }; }
+function getRoom() { return JSON.parse(localStorage.getItem(KEY)) || { status: 'lobby', startTime: null, students: {} }; }
 function saveRoom(room) { localStorage.setItem(KEY, JSON.stringify(room)); window.dispatchEvent(new Event('storage')); }
 
 function selectRole(r) {
     role = r; document.getElementById('roleSelector').style.display = 'none';
     if(r === 'student') show('scrJoin');
-    else { show('scrTeacher'); setInterval(updateTeacherUI, 1000); }
+    else { show('scrTeacher'); syncInt = setInterval(sync, 1000); }
 }
 
 function join() {
@@ -105,44 +97,99 @@ function join() {
     if(!myName) return;
     let room = getRoom(); room.students[myName] = { score: 0, status: 'esperando', answers: [] };
     saveRoom(room); document.getElementById('stName').textContent = myName;
-    show('scrWait'); setInterval(checkStatus, 1000);
+    show('scrWait'); syncInt = setInterval(sync, 1000);
 }
 
-function checkStatus() {
+function sync() {
     let room = getRoom();
-    if(room.status === 'active' && document.getElementById('scrWait').classList.contains('active')) show('scrWork');
-    if(room.status === 'active') updateLeaderboard(); 
+    // Actualizar Timer
+    if (room.startTime) {
+        let elapsed = Math.floor((Date.now() - room.startTime) / 1000);
+        let remaining = DURATION - elapsed;
+        if (remaining <= 0) {
+            remaining = 0;
+            if (role === 'student' && room.students[myName].status !== 'terminado') finish(true);
+        }
+        let m = Math.floor(remaining / 60), s = remaining % 60;
+        let timeStr = `${m}:${s < 10 ? '0'+s : s}`;
+        if(document.getElementById('timerStd')) document.getElementById('timerStd').textContent = timeStr;
+        if(document.getElementById('timerProf')) document.getElementById('timerProf').textContent = timeStr;
+    }
+
+    // Cambiar pantallas
+    if (role === 'student') {
+        if (room.status === 'active' && room.students[myName].status === 'esperando') show('scrWork');
+        if (room.students[myName].status === 'terminado') {
+            show('scrResults');
+            updateLeaderboard(room);
+        }
+    } else {
+        updateTeacherUI(room);
+    }
 }
 
-function finish() {
+function validateAndFinish() {
+    let missing = 0;
+    for(let i=0; i<20; i++) {
+        let inp = document.getElementById('q'+i);
+        if(!inp.value.trim()) {
+            inp.classList.add('missing');
+            missing++;
+        } else {
+            inp.classList.remove('missing');
+        }
+    }
+    if(missing > 0) {
+        alert("¡Cuidado! Te faltan " + missing + " campos por llenar. Estan marcados en rojo.");
+    } else {
+        finish(false);
+    }
+}
+
+function finish(auto) {
+    if(role !== 'student') return;
     let score = 0, uAns = [];
     for(let i=0; i<20; i++){
-        let v = document.getElementById('q'+i).value.toLowerCase(); uAns.push(v);
+        let v = document.getElementById('q'+i).value.toLowerCase();
+        uAns.push(v);
         if(v === ANSWERS[i]) score += 5;
     }
-    let room = getRoom(); room.students[myName] = { score: score, status: 'terminado', answers: uAns };
+    let room = getRoom();
+    room.students[myName] = { score: score, status: 'terminado', answers: uAns };
     saveRoom(room);
-    document.getElementById('myFinalScore').textContent = "Tu puntaje: " + score + " / 100";
+    if(auto) alert("¡Tiempo agotado! Tu examen se envió automáticamente.");
     show('scrResults');
 }
 
-function updateLeaderboard() {
-    let room = getRoom(), body = document.getElementById('leaderBody');
-    let sorted = Object.keys(room.students).map(n => ({name:n, score:room.students[n].score}))
-                 .sort((a,b) => b.score - a.score);
-    body.innerHTML = sorted.map((s, i) => `<tr class="${s.name===myName?'me':''}"><td>${i+1}</td><td>${s.name}</td><td>${s.score} pts</td></tr>`).join('');
+function startTaller() {
+    let room = getRoom();
+    room.status = 'active';
+    room.startTime = Date.now();
+    saveRoom(room);
+    document.getElementById('btnStart').disabled = true;
 }
 
-function updateTeacherUI() {
-    let room = getRoom(), body = document.getElementById('profBody');
-    body.innerHTML = Object.keys(room.students).map(n => {
+function updateLeaderboard(room) {
+    let body = document.getElementById('leaderBody');
+    let sorted = Object.keys(room.students).map(n => ({name:n, score:room.students[n].score})).sort((a,b) => b.score - a.score);
+    body.innerHTML = sorted.map((s, i) => `<tr><td>${i+1}</td><td>${s.name}</td><td>${s.score} pts</td></tr>`).join('');
+}
+
+function updateTeacherUI(room) {
+    let list = document.getElementById('profList');
+    list.innerHTML = Object.keys(room.students).map(n => {
         let s = room.students[n];
-        return `<tr><td>${n}</td><td>${s.status}</td><td>${s.score}</td><td><button class="btn btn-accent btn-small" style="width:auto; padding:2px 8px" onclick="alert('Respuestas: ${s.answers.join(', ')}')">Detalle</button></td></tr>`;
+        return `<div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;">
+            <span><strong>${n}</strong> (${s.status})</span>
+            <span>${s.score} pts</span>
+        </div>`;
     }).join('');
 }
 
-function start() { let room = getRoom(); room.status = 'active'; saveRoom(room); }
-function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
 </script>
 </body>
 </html>
