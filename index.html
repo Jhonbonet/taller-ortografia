@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Taller de Ortografía - En Vivo</title>
+<title>Taller de Ortografía - Versión Final</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap');
 
 :root {
   --navy: #1a237e; --blue: #3949ab; --accent: #ffd600; --green: #00c853;
-  --red: #f44336; --white: #ffffff; --light: #e8eaf6;
+  --red: #f44336; --orange: #ff6d00; --white: #ffffff; --light: #e8eaf6;
   --shadow: 0 8px 32px rgba(26,35,126,0.18);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -19,30 +19,36 @@ body {
   min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px 12px;
 }
 
-.screen { display: none; width: 100%; max-width: 600px; }
+/* UI Elements */
+.screen { display: none; width: 100%; max-width: 700px; }
 .screen.active { display: block; }
 .card { background: var(--white); border-radius: 24px; overflow: hidden; box-shadow: var(--shadow); margin-top: 20px; }
 .card-header { background: linear-gradient(135deg, #1a237e, #3949ab); padding: 25px; color: white; text-align: center; }
 .card-body { padding: 30px; }
 
 /* Role Selector */
-#roleSelector { text-align: center; color: white; margin-top: 50px; }
-.role-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; width: 100%; max-width: 500px; }
-.role-card { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 30px; cursor: pointer; transition: 0.3s; }
+#roleSelector { text-align: center; color: white; margin-top: 50px; width: 100%; max-width: 500px; }
+.role-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
+.role-card { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 30px; cursor: pointer; transition: 0.3s; color: white; }
 .role-card:hover { border-color: var(--accent); background: rgba(255,255,255,0.2); transform: translateY(-5px); }
 
-.btn { padding: 15px 25px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; font-family: inherit; margin-top: 10px; }
+/* Buttons & Inputs */
+.btn { padding: 15px 25px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; font-family: inherit; margin-top: 10px; transition: 0.2s; }
 .btn-accent { background: var(--accent); color: var(--navy); }
+.btn-accent:hover { background: #ffe600; transform: scale(1.02); }
 .btn-red { background: var(--red); color: white; }
 .text-input { width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 12px; font-size: 1.1rem; margin-bottom: 15px; outline: none; }
 
+/* Grid Alumnos */
 .teacher-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 20px 0; }
-.student-card { background: var(--light); padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-weight: 800; color: var(--navy); animation: slideIn 0.3s ease; }
-@keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+.student-card { background: var(--light); padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-weight: 800; color: var(--navy); }
 .dot { width: 10px; height: 10px; background: var(--green); border-radius: 50%; }
 
 .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--navy); border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto; }
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Timer */
+.timer-text { font-family: 'Fredoka One', cursive; font-size: 2rem; color: var(--navy); text-align: center; margin-bottom: 15px; }
 </style>
 </head>
 <body>
@@ -50,8 +56,8 @@ body {
 <div id="roleSelector">
     <h1 style="font-family: 'Fredoka One'; font-size: 2.5rem;">Taller de Ortografía</h1>
     <div class="role-cards">
-        <div class="role-card" onclick="selectRole('student')"><span style="font-size:3rem">🎒</span><br>Soy Alumno</div>
-        <div class="role-card" onclick="selectRole('teacher')"><span style="font-size:3rem">👩‍🏫</span><br>Soy Profesor</div>
+        <div class="role-card" onclick="selectRole('student')"><span style="font-size:3rem">🎒</span><br>Alumno</div>
+        <div class="role-card" onclick="selectRole('teacher')"><span style="font-size:3rem">👩‍🏫</span><br>Profesor</div>
     </div>
 </div>
 
@@ -70,58 +76,67 @@ body {
     <div class="card">
         <div class="card-header"><h2>Sala de Espera</h2></div>
         <div class="card-body" style="text-align:center">
-            <p style="font-size: 1.2rem;">Hola <strong id="waitName"></strong>, ya estás en la lista.</p>
+            <p>Hola <strong id="waitName"></strong>, espera a que el profesor inicie.</p>
             <div class="spinner"></div>
-            <p style="color: #666;">Esperando que el profesor inicie el taller...</p>
+        </div>
+    </div>
+</div>
+
+<div class="screen" id="scrStudentWork">
+    <div class="card">
+        <div class="card-header"><h2>¡Taller en curso!</h2></div>
+        <div class="card-body">
+            <div class="timer-text" id="timerDisp">05:00</div>
+            <p style="text-align:center; font-weight:bold;">Responde las preguntas en tu hoja física.</p>
         </div>
     </div>
 </div>
 
 <div class="screen" id="scrTeacherLobby">
     <div class="card">
-        <div class="card-header"><h2>Panel del Profesor</h2></div>
+        <div class="card-header"><h2>Panel de Control</h2></div>
         <div class="card-body">
-            <p style="font-weight: 700; color: #5c6bc0;">ALUMNOS CONECTADOS:</p>
+            <p style="font-weight: 700; color: var(--blue);">ALUMNOS EN SALA:</p>
             <div id="teacherStudentGrid" class="teacher-grid"></div>
             <div style="display:flex; gap:10px; margin-top:20px;">
                 <button class="btn btn-red" onclick="resetRoom()">Limpiar Sala</button>
-                <button class="btn btn-accent" id="startBtn" onclick="alert('¡Taller Iniciado!')" disabled>Iniciar Taller</button>
+                <button class="btn btn-accent" id="startTallerBtn" onclick="teacherStartTaller()">🚀 Iniciar Taller</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-// Usamos una clave única para evitar conflictos con versiones viejas
-const STORAGE_KEY = 'taller_v7_sync_fix';
+const STORAGE_KEY = 'taller_ortografia_vFinal';
 let myRole = '';
 let myName = '';
+let timerInterval;
 
-// --- FUNCIONES DE DATOS ---
+// Helpers de Datos
 function getRoom() {
     const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : { students: [] };
+    return data ? JSON.parse(data) : { status: 'lobby', students: [] };
 }
 
 function saveRoom(room) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(room));
+    window.dispatchEvent(new Event('storage')); // Forzar actualización en misma pestaña
 }
 
-// --- SELECCIÓN DE ROL ---
+// Selección de Rol
 function selectRole(role) {
     myRole = role;
     document.getElementById('roleSelector').style.display = 'none';
-    
     if (role === 'student') {
         showScreen('scrStudentJoin');
+        setInterval(checkRoomStatus, 1000); // El alumno vigila si el profesor inicia
     } else {
         showScreen('scrTeacherLobby');
-        // El profesor empieza a revisar la lista CADA 500ms
-        setInterval(refreshTeacherUI, 500);
+        setInterval(refreshTeacherUI, 500); // El profesor vigila si entran alumnos
     }
 }
 
-// --- LÓGICA ALUMNO ---
+// Lógica Alumno
 function joinRoom() {
     const input = document.getElementById('studentNameInput');
     const name = input.value.trim();
@@ -129,56 +144,77 @@ function joinRoom() {
 
     let room = getRoom();
     if (room.students.includes(name)) {
-        document.getElementById('joinError').innerText = "Ese nombre ya está en uso.";
+        document.getElementById('joinError').innerText = "Nombre ya registrado.";
         return;
     }
 
     myName = name;
     room.students.push(name);
     saveRoom(room);
-
     document.getElementById('waitName').innerText = name;
     showScreen('scrStudentWaiting');
 }
 
-// --- LÓGICA PROFESOR (ESTO CORRIGE EL ERROR) ---
+function checkRoomStatus() {
+    const room = getRoom();
+    if (room.status === 'active') {
+        showScreen('scrStudentWork');
+        startTimer(300, 'timerDisp');
+    } else if (room.status === 'lobby' && myName !== '') {
+        // Si el profesor resetea, volvemos al inicio
+        if (!room.students.includes(myName)) location.reload();
+    }
+}
+
+// Lógica Profesor
 function refreshTeacherUI() {
     if (myRole !== 'teacher') return;
-    
     const room = getRoom();
     const grid = document.getElementById('teacherStudentGrid');
-    const btn = document.getElementById('startBtn');
-
+    
     if (room.students.length === 0) {
         grid.innerHTML = '<p style="color:gray; text-align:center;">Esperando alumnos...</p>';
-        btn.disabled = true;
-        btn.style.opacity = "0.5";
     } else {
-        btn.disabled = false;
-        btn.style.opacity = "1";
-        // Solo actualizamos el HTML si el número de alumnos cambió (para no parpadear)
-        const currentCount = grid.querySelectorAll('.student-card').length;
-        if (currentCount !== room.students.length) {
-            grid.innerHTML = room.students.map(name => `
-                <div class="student-card">
-                    <div class="dot"></div>
-                    <span>${name}</span>
-                </div>
-            `).join('');
-        }
+        grid.innerHTML = room.students.map(n => `
+            <div class="student-card"><div class="dot"></div>${n}</div>
+        `).join('');
     }
+}
+
+function teacherStartTaller() {
+    const room = getRoom();
+    if (room.students.length === 0) {
+        alert("No hay alumnos en la sala.");
+        return;
+    }
+    room.status = 'active';
+    saveRoom(room);
+    alert("¡Taller iniciado para todos!");
 }
 
 function resetRoom() {
-    if (confirm("¿Borrar todos los alumnos?")) {
-        saveRoom({ students: [] });
-        refreshTeacherUI();
+    if (confirm("¿Reiniciar la sala?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
     }
 }
 
+// Utilidades
 function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+}
+
+function startTimer(duration, displayId) {
+    if (timerInterval) return;
+    let timer = duration, minutes, seconds;
+    const display = document.getElementById(displayId);
+    timerInterval = setInterval(() => {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+        display.textContent = (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+        if (--timer < 0) clearInterval(timerInterval);
+    }, 1000);
 }
 </script>
 </body>
