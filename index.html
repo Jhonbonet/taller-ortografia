@@ -547,7 +547,7 @@ body {
       <div class="section-label">Tabla completa</div>
       <div class="results-list" id="studentResultsList"></div>
       <div style="text-align:center;margin-top:24px;">
-        <button class="btn btn-navy" onclick="location.reload()">🔄 Nueva Sesión</button>
+        <button class="btn btn-navy" onclick="location.reload()">🔄 Volver al Inicio</button>
       </div>
     </div>
   </div>
@@ -578,16 +578,26 @@ body {
           <div class="stat-label" style="margin-top:6px;">Estado</div>
         </div>
       </div>
-      <div class="section-label">Alumnos en la sala</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div class="section-label" style="margin-bottom:0">Alumnos en la sala</div>
+        <button class="btn btn-navy" style="font-size:0.78rem;padding:6px 14px;" onclick="updateTeacherLobby()">
+          🔄 Actualizar lista
+        </button>
+      </div>
       <div class="teacher-grid" id="teacherStudentGrid"></div>
       <hr class="divider">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
         <div style="font-size:0.88rem;font-weight:700;color:#78909c;">
           El taller dura <strong>5 minutos</strong>. Todos comienzan al mismo tiempo.
         </div>
-        <button class="btn btn-accent btn-big" id="startTallerBtn" onclick="teacherStartTaller()" disabled>
-          🚀 Iniciar Taller
-        </button>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
+          <button class="btn btn-red" onclick="resetRoom()" title="Borrar sala y comenzar de cero" style="font-size:0.85rem;padding:10px 16px;">
+            🗑 Limpiar Sala
+          </button>
+          <button class="btn btn-accent btn-big" id="startTallerBtn" onclick="teacherStartTaller()" disabled>
+            🚀 Iniciar Taller
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -648,8 +658,8 @@ body {
       <div class="podium" id="teacherPodium"></div>
       <div class="section-label">Tabla completa — Mayor a menor puntaje</div>
       <div class="results-list" id="teacherResultsList"></div>
-      <div style="text-align:center;margin-top:24px;">
-        <button class="btn btn-navy btn-big" onclick="location.reload()">🔄 Nueva Sesión</button>
+      <div style="text-align:center;margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-navy btn-big" onclick="resetRoom()">🔄 Nueva Sesión</button>
       </div>
     </div>
   </div>
@@ -657,11 +667,11 @@ body {
 
 <script>
 // ============================================================
-//  STORAGE KEY + STATE
+//  CONSTANTS & STATE
 // ============================================================
-const STORAGE_KEY = 'taller_ortografia_room';
+const STORAGE_KEY  = 'taller_ortografia_room_v3';
 const MAX_STUDENTS = 40;
-const TOTAL_TIME = 300; // 5 min
+const TOTAL_TIME   = 300; // 5 minutos
 
 const ANSWERS = {
   b0:'v', b1:'b', b2:'b', b3:'j', b4:'n',
@@ -671,37 +681,34 @@ const ANSWERS = {
 };
 const TOTAL_BLANKS = Object.keys(ANSWERS).length;
 
-let myName = '';
-let myRole = '';
-let timerInterval = null;
-let pollInterval = null;
-let timeLeft = TOTAL_TIME;
-let submitted = false;
+let myName       = '';
+let myRole       = '';
+let timerInt     = null;   // countdown setInterval
+let lobbyInt     = null;   // teacher lobby poll
+let monitorInt   = null;   // teacher monitor poll
+let studentInt   = null;   // student waiting/results poll
+let timeLeft     = TOTAL_TIME;
+let submitted    = false;
 
 // ============================================================
-//  ROOM DATA (stored as shared JSON)
+//  ROOM HELPERS
 // ============================================================
 function emptyRoom() {
-  return {
-    phase: 'lobby',      // lobby | active | results
-    students: {},        // name -> { joined, score, correct, submitted }
-    startTime: null,
-    endTime: null,
-    lastUpdate: Date.now()
-  };
+  return { phase:'lobby', students:{}, startTime:null, endTime:null, ts:Date.now() };
 }
-
 function loadRoom() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return emptyRoom();
-    return JSON.parse(raw);
+    return raw ? JSON.parse(raw) : emptyRoom();
   } catch { return emptyRoom(); }
 }
-
 function saveRoom(room) {
-  room.lastUpdate = Date.now();
+  room.ts = Date.now();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(room));
+}
+function clearAllIntervals() {
+  [timerInt, lobbyInt, monitorInt, studentInt].forEach(id => { if(id) clearInterval(id); });
+  timerInt = lobbyInt = monitorInt = studentInt = null;
 }
 
 // ============================================================
@@ -710,23 +717,159 @@ function saveRoom(room) {
 function selectRole(role) {
   myRole = role;
   document.getElementById('roleSelector').style.display = 'none';
+
   if (role === 'student') {
     showScreen('scrStudentJoin');
   } else {
-    // teacher
+    // Profesor: si la sala está en resultados, limpiarla
     let room = loadRoom();
-    if (room.phase === 'results') {
-      // reset
-      room = emptyRoom();
-      saveRoom(room);
-    }
+    if (room.phase === 'results') { room = emptyRoom(); saveRoom(room); }
     showScreen('scrTeacherLobby');
-    startTeacherPoll();
+    setTimeout(initTeacherLobby, 150);
   }
 }
 
 // ============================================================
-//  STUDENT FLOW
+//  TEACHER — LOBBY
+// ============================================================
+function initTeacherLobby() {
+  clearAllIntervals();
+  renderTeacherLobby();
+  lobbyInt = setInterval(() => {
+    const room = loadRoom();
+    if (room.phase === 'lobby')   { renderTeacherLobby(); }
+    else if (room.phase === 'active')  { clearAllIntervals(); initTeacherMonitor(); }
+    else if (room.phase === 'results') { clearAllIntervals(); renderTeacherResults(loadRoom()); }
+  }, 800);
+}
+
+function renderTeacherLobby() {
+  const room  = loadRoom();
+  const names = Object.keys(room.students);
+  const n     = names.length;
+
+  const statEl = document.getElementById('statJoined');
+  const btnEl  = document.getElementById('startTallerBtn');
+  const gridEl = document.getElementById('teacherStudentGrid');
+  if (!statEl || !btnEl || !gridEl) return;
+
+  statEl.textContent = n;
+
+  // Habilitar/deshabilitar botón directamente en el DOM
+  btnEl.disabled        = (n < 1);
+  btnEl.style.opacity   = (n < 1) ? '0.45' : '1';
+  btnEl.style.cursor    = (n < 1) ? 'not-allowed' : 'pointer';
+
+  gridEl.innerHTML = names.length
+    ? names.map(s => `
+        <div class="teacher-student-card">
+          <div class="t-avatar">${s[0].toUpperCase()}</div>
+          <div>
+            <div class="t-name">${s}</div>
+            <div class="t-status ok">✓ Conectado</div>
+          </div>
+        </div>`).join('')
+    : '<div style="color:#9fa8da;font-weight:700;padding:8px;">Esperando alumnos...</div>';
+}
+
+function teacherStartTaller() {
+  const room  = loadRoom();
+  const names = Object.keys(room.students);
+  if (names.length < 1) { showToast('⚠️ Aún no hay alumnos en la sala.'); return; }
+
+  clearAllIntervals();
+  room.phase     = 'active';
+  room.startTime = Date.now();
+  saveRoom(room);
+  initTeacherMonitor();
+}
+
+// ============================================================
+//  TEACHER — MONITOR
+// ============================================================
+function initTeacherMonitor() {
+  clearAllIntervals();
+  showScreen('scrTeacherMonitor');
+
+  const room    = loadRoom();
+  const elapsed = Math.floor((Date.now() - room.startTime) / 1000);
+  timeLeft      = Math.max(0, TOTAL_TIME - elapsed);
+
+  renderTeacherTimer();
+  renderMonitorGrid();
+
+  // Countdown
+  timerInt = setInterval(() => {
+    timeLeft--;
+    renderTeacherTimer();
+    if (timeLeft <= 0) { clearInterval(timerInt); timerInt = null; teacherEndNow(); }
+  }, 1000);
+
+  // Grid poll
+  monitorInt = setInterval(renderMonitorGrid, 1000);
+}
+
+function renderTeacherTimer() {
+  const m   = Math.floor(timeLeft / 60), s = timeLeft % 60;
+  const txt = document.getElementById('teacherTimerText');
+  const bar = document.getElementById('teacherTimerBar');
+  if (!txt || !bar) return;
+  txt.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  txt.className   = 'timer-text' + (timeLeft <= 60 ? ' urgent' : '');
+  bar.style.width = (timeLeft / TOTAL_TIME * 100) + '%';
+}
+
+function renderMonitorGrid() {
+  const room  = loadRoom();
+  const st    = room.students;
+  const names = Object.keys(st);
+  const done  = names.filter(n => st[n].submitted).length;
+
+  const elTotal   = document.getElementById('monTotal');
+  const elDone    = document.getElementById('monDone');
+  const elPending = document.getElementById('monPending');
+  const elGrid    = document.getElementById('monitorGrid');
+  if (!elTotal) return;
+
+  elTotal.textContent   = names.length;
+  elDone.textContent    = done;
+  elPending.textContent = names.length - done;
+
+  elGrid.innerHTML = names.map(n => {
+    const info = st[n];
+    return `
+      <div class="teacher-student-card ${info.submitted ? 'done' : ''}">
+        <div class="t-avatar">${n[0].toUpperCase()}</div>
+        <div>
+          <div class="t-name">${n}</div>
+          <div class="t-status ${info.submitted ? 'ok' : ''}">
+            ${info.submitted ? `✅ ${(info.score || 0).toLocaleString()} pts` : '⏳ En progreso'}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function teacherEndNow() {
+  clearAllIntervals();
+  const room    = loadRoom();
+  room.phase    = 'results';
+  room.endTime  = Date.now();
+  saveRoom(room);
+  renderTeacherResults(room);
+}
+
+// ============================================================
+//  TEACHER — RESULTS
+// ============================================================
+function renderTeacherResults(room) {
+  showScreen('scrTeacherResults');
+  buildResultsUI(room, 'teacherPodium', 'teacherResultsList');
+  launchConfetti();
+}
+
+// ============================================================
+//  STUDENT — JOIN
 // ============================================================
 function updateAvatar() {
   const val = document.getElementById('studentNameInput').value.trim();
@@ -734,20 +877,20 @@ function updateAvatar() {
 }
 
 function joinRoom() {
-  const inp = document.getElementById('studentNameInput');
+  const inp  = document.getElementById('studentNameInput');
   const name = inp.value.trim();
-  const err = document.getElementById('joinError');
+  const err  = document.getElementById('joinError');
 
   if (!name) { err.textContent = '⚠️ Escribe tu nombre para continuar.'; return; }
 
   const room = loadRoom();
 
   if (room.phase === 'results') { err.textContent = '⚠️ El taller ya terminó. Espera una nueva sesión.'; return; }
-  if (room.phase === 'active') { err.textContent = '⚠️ El taller ya comenzó. No puedes unirte ahora.'; return; }
-
-  const count = Object.keys(room.students).length;
-  if (room.students[name]) { err.textContent = '⚠️ Ese nombre ya está registrado. ¿Eres tú? Si es así, espera.'; return; }
-  if (count >= MAX_STUDENTS) { err.textContent = `⚠️ La sala está llena (${MAX_STUDENTS} alumnos máximo).`; return; }
+  if (room.phase === 'active')  { err.textContent = '⚠️ El taller ya comenzó, no puedes unirte ahora.'; return; }
+  if (room.students[name])      { err.textContent = '⚠️ Ese nombre ya está en la sala. Elige otro o espera.'; return; }
+  if (Object.keys(room.students).length >= MAX_STUDENTS) {
+    err.textContent = `⚠️ La sala está llena (${MAX_STUDENTS} alumnos máximo).`; return;
+  }
 
   myName = name;
   room.students[name] = { joined: Date.now(), score: 0, correct: 0, submitted: false };
@@ -756,77 +899,80 @@ function joinRoom() {
 
   document.getElementById('waitName').textContent = name;
   showScreen('scrStudentWaiting');
-  startStudentPoll();
+  initStudentWait();
 }
 
-function startStudentPoll() {
-  pollInterval = setInterval(() => {
+// ============================================================
+//  STUDENT — WAITING
+// ============================================================
+function initStudentWait() {
+  clearAllIntervals();
+  renderPeerList();
+  studentInt = setInterval(() => {
     const room = loadRoom();
-    // Update peer list
-    const peers = Object.keys(room.students).filter(n => n !== myName);
-    const list = document.getElementById('waitingPeerList');
-    if (list) {
-      list.innerHTML = Object.keys(room.students).map(n => `
-        <div class="student-pill">
-          <div class="pill-dot"></div>${n}${n===myName?' (tú)':''}
-        </div>`).join('');
-      document.getElementById('peerCount').textContent =
-        `${Object.keys(room.students).length} alumno(s) conectado(s)`;
-    }
-    // Check phase
+    renderPeerList(room);
     if (room.phase === 'active' && !submitted) {
-      clearInterval(pollInterval);
-      startStudentExercise(room);
+      clearAllIntervals();
+      initStudentExercise(room);
     }
     if (room.phase === 'results') {
-      clearInterval(pollInterval);
-      clearInterval(timerInterval);
-      showStudentResults(room);
+      clearAllIntervals();
+      renderStudentResults(loadRoom());
     }
   }, 1000);
 }
 
-function startStudentExercise(room) {
+function renderPeerList(room) {
+  if (!room) room = loadRoom();
+  const names = Object.keys(room.students);
+  const list  = document.getElementById('waitingPeerList');
+  const count = document.getElementById('peerCount');
+  if (!list) return;
+  list.innerHTML = names.map(n => `
+    <div class="student-pill">
+      <div class="pill-dot"></div>${n}${n === myName ? ' (tú)' : ''}
+    </div>`).join('');
+  if (count) count.textContent = `${names.length} alumno(s) conectado(s)`;
+}
+
+// ============================================================
+//  STUDENT — EXERCISE
+// ============================================================
+function initStudentExercise(room) {
+  clearAllIntervals();
   document.getElementById('exStudentName').textContent = `¡Hola, ${myName}!`;
   showScreen('scrStudentExercise');
-  buildStudentExercise();
+  buildExerciseHTML();
 
-  // Calculate remaining time
   const elapsed = Math.floor((Date.now() - room.startTime) / 1000);
   timeLeft = Math.max(0, TOTAL_TIME - elapsed);
-  updateStudentTimer();
+  renderStudentTimer();
 
-  timerInterval = setInterval(() => {
+  // Countdown
+  timerInt = setInterval(() => {
     timeLeft--;
-    updateStudentTimer();
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      studentSubmit(true);
-    }
+    renderStudentTimer();
+    if (timeLeft <= 0) { clearInterval(timerInt); timerInt = null; submitAnswers(true); }
   }, 1000);
 
-  // Keep polling for results phase
-  pollInterval = setInterval(() => {
+  // Poll for results phase (teacher ends early)
+  studentInt = setInterval(() => {
     const r = loadRoom();
-    if (r.phase === 'results') {
-      clearInterval(pollInterval);
-      clearInterval(timerInterval);
-      showStudentResults(r);
-    }
+    if (r.phase === 'results') { clearAllIntervals(); renderStudentResults(r); }
   }, 1500);
 }
 
-function updateStudentTimer() {
-  const m = Math.floor(timeLeft/60), s = timeLeft%60;
+function renderStudentTimer() {
+  const m   = Math.floor(timeLeft / 60), s = timeLeft % 60;
   const txt = document.getElementById('studentTimerText');
   const bar = document.getElementById('studentTimerBar');
   if (!txt || !bar) return;
   txt.textContent = `${m}:${s.toString().padStart(2,'0')}`;
-  txt.className = 'timer-text' + (timeLeft <= 60 ? ' urgent' : '');
-  bar.style.width = (timeLeft/TOTAL_TIME*100) + '%';
+  txt.className   = 'timer-text' + (timeLeft <= 60 ? ' urgent' : '');
+  bar.style.width = (timeLeft / TOTAL_TIME * 100) + '%';
 }
 
-function buildStudentExercise() {
+function buildExerciseHTML() {
   document.getElementById('studentExercise').innerHTML = `
     El jo<input class="blank-inp" id="b0" maxlength="1" placeholder="_">en
     o<input class="blank-inp" id="b1" maxlength="1" placeholder="_">ser<input class="blank-inp" id="b2" maxlength="1" placeholder="_">aba
@@ -849,233 +995,152 @@ function buildStudentExercise() {
     que o<input class="blank-inp" id="b19" maxlength="1" placeholder="_">recer.
   `;
   document.querySelectorAll('.blank-inp').forEach(inp => {
-    inp.addEventListener('focus', () => { if(!inp.classList.contains('ok')&&!inp.classList.contains('err')) inp.style.borderBottomColor='#ffd600'; });
-    inp.addEventListener('blur',  () => { if(!inp.classList.contains('ok')&&!inp.classList.contains('err')) inp.style.borderBottomColor='var(--navy)'; });
+    inp.addEventListener('focus', () => {
+      if (!inp.classList.contains('ok') && !inp.classList.contains('err'))
+        inp.style.borderBottomColor = '#ffd600';
+    });
+    inp.addEventListener('blur', () => {
+      if (!inp.classList.contains('ok') && !inp.classList.contains('err'))
+        inp.style.borderBottomColor = 'var(--navy)';
+    });
+    // Auto-advance to next input
+    inp.addEventListener('input', () => {
+      if (inp.value.length === 1) {
+        const id  = parseInt(inp.id.replace('b',''));
+        const nxt = document.getElementById('b' + (id + 1));
+        if (nxt) nxt.focus();
+      }
+    });
   });
 }
 
-function studentSubmit(auto = false) {
+function submitAnswers(auto = false) {
   if (submitted) return;
   submitted = true;
-  clearInterval(timerInterval);
+  clearInterval(timerInt); timerInt = null;
 
   let correct = 0;
   Object.entries(ANSWERS).forEach(([id, ans]) => {
     const inp = document.getElementById(id);
     if (!inp) return;
-    const val = inp.value.trim().toLowerCase();
-    if (val === ans) { correct++; inp.classList.add('ok'); }
-    else { inp.classList.add('err'); inp.value = ans; }
+    if (inp.value.trim().toLowerCase() === ans) {
+      correct++;
+      inp.classList.add('ok');
+    } else {
+      inp.classList.add('err');
+      inp.value = ans; // muestra la respuesta correcta
+    }
     inp.disabled = true;
   });
 
-  const timeBonus = timeLeft;
-  const base = Math.round((correct / TOTAL_BLANKS) * 8000);
-  const bonus = Math.round((timeBonus / TOTAL_TIME) * 2000);
+  const base  = Math.round((correct / TOTAL_BLANKS) * 8000);
+  const bonus = Math.round((timeLeft / TOTAL_TIME) * 2000);
   const total = Math.min(base + bonus, 10000);
 
-  // Save score to room
+  // Guardar en sala
   const room = loadRoom();
   if (room.students[myName]) {
-    room.students[myName].correct = correct;
-    room.students[myName].score = total;
+    room.students[myName].correct   = correct;
+    room.students[myName].score     = total;
     room.students[myName].submitted = true;
   }
   saveRoom(room);
 
-  // UI
-  document.getElementById('submitArea').style.display = 'none';
+  document.getElementById('submitArea').style.display    = 'none';
   document.getElementById('submitDoneMsg').style.display = 'block';
-  showToast(`✅ Enviado: ${correct}/${TOTAL_BLANKS} correctas — ${total.toLocaleString()} pts`);
+  showToast(`✅ ${correct}/${TOTAL_BLANKS} correctas · ${total.toLocaleString()} puntos`);
 }
 
-function showStudentResults(room) {
+// ============================================================
+//  STUDENT — RESULTS
+// ============================================================
+function renderStudentResults(room) {
   showScreen('scrStudentResults');
-  const me = room.students[myName];
-
-  // My banner
-  if (me) {
-    document.getElementById('myResultBanner').innerHTML = `
-      <div style="background:var(--light);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:4px;">
-        <div style="font-size:2.4rem;">${getEmoji(me.score)}</div>
-        <div>
-          <div style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--navy);">Tu resultado, ${myName}</div>
-          <div style="font-size:0.9rem;color:#78909c;font-weight:700;">${me.correct||0}/${TOTAL_BLANKS} correctas · <strong style="color:var(--navy);">${(me.score||0).toLocaleString()} puntos</strong></div>
-        </div>
-      </div>`;
-  }
-  renderResults(room, 'studentPodium', 'studentResultsList');
-  launchConfetti();
-}
-
-function getEmoji(score) {
-  if (score >= 9000) return '🥇';
-  if (score >= 7000) return '🎉';
-  if (score >= 5000) return '👍';
-  return '📝';
-}
-
-// ============================================================
-//  TEACHER FLOW
-// ============================================================
-function startTeacherPoll() {
-  updateTeacherLobby();
-  pollInterval = setInterval(() => {
-    const room = loadRoom();
-    if (room.phase === 'lobby') updateTeacherLobby();
-    else if (room.phase === 'active') {
-      clearInterval(pollInterval);
-      startTeacherMonitor();
-    } else if (room.phase === 'results') {
-      clearInterval(pollInterval);
-      clearInterval(timerInterval);
-      showTeacherResults(loadRoom());
-    }
-  }, 1000);
-}
-
-function updateTeacherLobby() {
-  const room = loadRoom();
-  const students = Object.keys(room.students);
-  const n = students.length;
-
-  document.getElementById('statJoined').textContent = n;
-  document.getElementById('startTallerBtn').disabled = n < 1;
-
-  const grid = document.getElementById('teacherStudentGrid');
-  grid.innerHTML = students.map(s => `
-    <div class="teacher-student-card">
-      <div class="t-avatar">${s[0].toUpperCase()}</div>
+  const me = room.students[myName] || {};
+  document.getElementById('myResultBanner').innerHTML = `
+    <div style="background:var(--light);border-radius:14px;padding:16px 20px;
+                display:flex;align-items:center;gap:14px;margin-bottom:4px;">
+      <div style="font-size:2.4rem;">${scoreEmoji(me.score)}</div>
       <div>
-        <div class="t-name">${s}</div>
-        <div class="t-status ok">✓ Conectado</div>
-      </div>
-    </div>`).join('') || '<div style="color:#9fa8da;font-weight:700;padding:8px;">Esperando alumnos...</div>';
-}
-
-function teacherStartTaller() {
-  const room = loadRoom();
-  if (Object.keys(room.students).length < 1) return;
-  room.phase = 'active';
-  room.startTime = Date.now();
-  saveRoom(room);
-  clearInterval(pollInterval);
-  startTeacherMonitor();
-}
-
-function startTeacherMonitor() {
-  showScreen('scrTeacherMonitor');
-  const room = loadRoom();
-  const elapsed = Math.floor((Date.now() - room.startTime) / 1000);
-  timeLeft = Math.max(0, TOTAL_TIME - elapsed);
-  updateTeacherTimer();
-  updateMonitorGrid();
-
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    updateTeacherTimer();
-    updateMonitorGrid();
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      teacherEndNow();
-    }
-  }, 1000);
-
-  pollInterval = setInterval(updateMonitorGrid, 1500);
-}
-
-function updateTeacherTimer() {
-  const m = Math.floor(timeLeft/60), s = timeLeft%60;
-  const txt = document.getElementById('teacherTimerText');
-  const bar = document.getElementById('teacherTimerBar');
-  if (!txt||!bar) return;
-  txt.textContent = `${m}:${s.toString().padStart(2,'0')}`;
-  txt.className = 'timer-text' + (timeLeft<=60?' urgent':'');
-  bar.style.width = (timeLeft/TOTAL_TIME*100)+'%';
-}
-
-function updateMonitorGrid() {
-  const room = loadRoom();
-  const students = room.students;
-  const names = Object.keys(students);
-  const done = names.filter(n => students[n].submitted).length;
-
-  document.getElementById('monTotal').textContent = names.length;
-  document.getElementById('monDone').textContent = done;
-  document.getElementById('monPending').textContent = names.length - done;
-
-  document.getElementById('monitorGrid').innerHTML = names.map(n => {
-    const s = students[n];
-    return `
-      <div class="teacher-student-card ${s.submitted?'done':''}">
-        <div class="t-avatar">${n[0].toUpperCase()}</div>
-        <div>
-          <div class="t-name">${n}</div>
-          <div class="t-status ${s.submitted?'ok':''}">${s.submitted ? `✅ ${s.score?.toLocaleString()||0} pts` : '⏳ En progreso'}</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--navy);">
+          Tu resultado, ${myName}
         </div>
-      </div>`;
-  }).join('');
-}
-
-function teacherEndNow() {
-  clearInterval(timerInterval);
-  clearInterval(pollInterval);
-  const room = loadRoom();
-  room.phase = 'results';
-  room.endTime = Date.now();
-  saveRoom(room);
-  showTeacherResults(room);
-}
-
-function showTeacherResults(room) {
-  showScreen('scrTeacherResults');
-  renderResults(room, 'teacherPodium', 'teacherResultsList');
+        <div style="font-size:0.9rem;color:#78909c;font-weight:700;">
+          ${me.correct||0}/${TOTAL_BLANKS} correctas ·
+          <strong style="color:var(--navy);">${(me.score||0).toLocaleString()} puntos</strong>
+        </div>
+      </div>
+    </div>`;
+  buildResultsUI(room, 'studentPodium', 'studentResultsList');
   launchConfetti();
+}
+
+function scoreEmoji(s) {
+  if (s >= 9000) return '🥇';
+  if (s >= 7000) return '🎉';
+  if (s >= 5000) return '👍';
+  return '📝';
 }
 
 // ============================================================
 //  SHARED RESULTS RENDERER
 // ============================================================
-function renderResults(room, podiumId, listId) {
-  const students = room.students;
-  const sorted = Object.keys(students).sort((a,b) => (students[b].score||0) - (students[a].score||0));
+function buildResultsUI(room, podiumId, listId) {
+  const st     = room.students;
+  const sorted = Object.keys(st).sort((a,b) => (st[b].score||0) - (st[a].score||0));
+  const top    = sorted.slice(0, 3);
 
-  // Podium
-  const top = sorted.slice(0,3);
-  const order = top.length >= 3 ? [1,0,2] : top.length === 2 ? [1,0] : [0];
-  const avCls = ['p2-av','p1-av','p3-av'];
-  const blCls = ['pb2','pb1','pb3'];
+  // Podium order: 2nd, 1st, 3rd
+  const order  = top.length >= 3 ? [1,0,2] : top.length === 2 ? [1,0] : [0];
+  const avCls  = ['p2-av','p1-av','p3-av'];
+  const blCls  = ['pb2','pb1','pb3'];
   const emojis = ['🥈','🥇','🥉'];
 
   document.getElementById(podiumId).innerHTML = order.map(i => {
     if (!top[i]) return '';
-    const s = top[i], sc = students[s];
+    const s = top[i], info = st[s];
     return `
       <div class="p-place">
         <div class="p-avatar ${avCls[i]}">${s[0].toUpperCase()}</div>
         <div class="p-name">${s}</div>
-        <div class="p-block ${blCls[i]}">${emojis[i]}<br>${(sc.score||0).toLocaleString()}</div>
+        <div class="p-block ${blCls[i]}">${emojis[i]}<br>${(info.score||0).toLocaleString()}</div>
       </div>`;
   }).join('');
 
-  // Full list
   document.getElementById(listId).innerHTML = sorted.map((s, i) => {
-    const sc = students[s];
-    const pct = ((sc.score||0) / 10000) * 100;
+    const info = st[s];
+    const pct  = ((info.score||0) / 10000) * 100;
     const rrCls = i===0?'rr1':i===1?'rr2':i===2?'rr3':'';
     return `
       <div class="result-row">
         <div class="result-rank ${rrCls}">${i+1}</div>
         <div style="flex:1">
           <div class="result-name">${s}</div>
-          <div class="result-correct">${sc.correct||0}/${TOTAL_BLANKS} correctas${sc.submitted?'':' · No entregó'}</div>
+          <div class="result-correct">${info.correct||0}/${TOTAL_BLANKS} correctas
+            ${info.submitted ? '' : '· <em>No entregó</em>'}
+          </div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <div class="score-mini-bar"><div class="score-mini-fill" style="width:${pct}%"></div></div>
-          <div class="result-score">${(sc.score||0).toLocaleString()}</div>
+          <div class="score-mini-bar">
+            <div class="score-mini-fill" style="width:${pct}%"></div>
+          </div>
+          <div class="result-score">${(info.score||0).toLocaleString()}</div>
         </div>
       </div>`;
   }).join('');
+}
+
+// ============================================================
+//  RESET
+// ============================================================
+function resetRoom() {
+  clearAllIntervals();
+  const fresh = emptyRoom();
+  saveRoom(fresh);
+  submitted = false;
+  myName    = '';
+  showToast('🗑 Sala limpiada. Recargando...');
+  setTimeout(() => location.reload(), 1200);
 }
 
 // ============================================================
@@ -1085,10 +1150,10 @@ function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
   if (el) el.classList.add('active');
-  window.scrollTo(0,0);
+  window.scrollTo(0, 0);
 }
 
-function showToast(msg, dur=3000) {
+function showToast(msg, dur = 3500) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
@@ -1099,27 +1164,23 @@ function launchConfetti() {
   const canvas = document.getElementById('confettiCanvas');
   canvas.innerHTML = '';
   const colors = ['#ffd600','#1a237e','#00c853','#f44336','#5c6bc0','#ff7043','#ffffff'];
-  for (let i=0; i<100; i++) {
-    const p = document.createElement('div');
-    const size = Math.random()*10+5;
+  for (let i = 0; i < 110; i++) {
+    const p    = document.createElement('div');
+    const size = Math.random() * 10 + 5;
     p.style.cssText = `
       position:absolute; top:${Math.random()*-5}%; left:${Math.random()*100}%;
       width:${size}px; height:${size}px;
       background:${colors[Math.floor(Math.random()*colors.length)]};
-      border-radius:${Math.random()>0.4?'50%':'2px'};
-      animation: confetti-fall ${1.5+Math.random()*2.5}s ${Math.random()*2}s linear forwards;
-      opacity:0.95;
+      border-radius:${Math.random()>0.4?'50%':'3px'};
+      animation:cffall ${1.5+Math.random()*2.5}s ${Math.random()*2}s linear forwards;
     `;
     canvas.appendChild(p);
   }
-  const st = document.createElement('style');
-  st.id = 'confetti-anim';
-  st.textContent = `@keyframes confetti-fall {
-    0%   { transform:translateY(0) rotate(0deg); opacity:1; }
-    100% { transform:translateY(110vh) rotate(720deg); opacity:0; }
-  }`;
+  const st = document.getElementById('cfanim') || document.createElement('style');
+  st.id = 'cfanim';
+  st.textContent = `@keyframes cffall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}`;
   document.head.appendChild(st);
-  setTimeout(() => { canvas.innerHTML=''; }, 6000);
+  setTimeout(() => { canvas.innerHTML = ''; }, 6000);
 }
 </script>
 </body>
